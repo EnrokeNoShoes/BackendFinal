@@ -38,5 +38,20 @@ namespace ProyectoFinal.Datos{
             }
             return null; // Usuario no encontrado o credenciales inválidas
         }
+
+        public async Task<bool> UsuarioExiste(int codusu)
+        {
+            using (var npgsql = new NpgsqlConnection(_conexionBD.cadenaSQL()))
+            {
+                await npgsql.OpenAsync();
+                using (var cmd = new NpgsqlCommand("SELECT COUNT(*) FROM usuarios WHERE codusuario = @codusu", npgsql))
+                {
+                    cmd.Parameters.AddWithValue("@codusu", codusu);
+                    var count = (long)await cmd.ExecuteScalarAsync();
+                    return count > 0;
+                }
+            }
+        }
+
     }
 }

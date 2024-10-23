@@ -27,8 +27,8 @@ namespace ProyectoFinal.Controllers
 
     public class UsuarioLogin
     {
-        public string NomUsu { get; set; }
-        public string PassUsu { get; set; }
+        public string? NomUsu { get; set; }
+        public string? PassUsu { get; set; }
     }
 }
 
