@@ -86,5 +86,39 @@ namespace ProyectoFinal.Datos{
             return lista;
         }
 
+        public async Task<Mtipoiva> MostrarIvaporID(int id)
+        {
+            Mtipoiva mtipoiva = null; // Inicializar el objeto
+
+            // Usar la conexión a PostgreSQL
+            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            {
+                // Ejecutar la función con el parámetro id para obtener un solo registro
+                using (var cmd = new NpgsqlCommand("SELECT numiva,desiva,coheficiente FROM tipoiva where codiva = @id", npgsql)) // Asegúrate de que tu función se llame correctamente
+                {
+                    cmd.Parameters.AddWithValue("@id", id); // Agregar el parámetro
+
+                    await npgsql.OpenAsync();
+
+                    // Ejecutar la consulta
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync()) // Solo leer el primer registro
+                        {
+                            mtipoiva = new Mtipoiva
+                            {
+                                numiva = reader["numiva"] as string,
+                                desiva = reader["desiva"] as string,
+                                coheficiente = (decimal)reader["coheficiente"],
+                            };
+                        }
+                    }
+                }
+            }
+            return
+             mtipoiva; // Retornar el objeto encontrado o null si no se encontró
+        }
+
+
     }
 }

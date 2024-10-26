@@ -32,6 +32,18 @@ namespace ProyectoFinal.Controllers{
             return lista;
         } 
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Mtipoiva>> Get(int id)
+        {
+            var funcion = new Dtipoiva();
+            var tipoiva = await funcion.MostrarIvaporID(id); // Llama al método que obtiene la empresa por ID
+            if (tipoiva == null) // Si no se encuentra la empresa
+            {
+                return NotFound(); // Retorna un 404 Not Found
+            }
+            return Ok(tipoiva); // Retorna un 200 OK con el objeto de la empresa
+        }
+
 
     }
 

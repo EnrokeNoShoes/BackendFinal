@@ -40,8 +40,7 @@ namespace ProyectoFinal.Datos{
                     }
                 }
             }
-            return
-            mconsultapersona; // Retornar el objeto encontrado o null si no se encontró
+            return mconsultapersona; // Retornar el objeto encontrado o null si no se encontró
         }
     }
 
