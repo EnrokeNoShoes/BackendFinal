@@ -7,8 +7,6 @@ using ProyectoFinal.Persistencia;
 namespace ProyectoFinal.Datos{
     public class Dconsultapersona{
         ConexionBD cn = new ConexionBD();
-
-
         public async Task<Mconsultapersona> Mostrarpersona(string numdoc)
         {
             Mconsultapersona mconsultapersona = null; // Inicializar el objeto

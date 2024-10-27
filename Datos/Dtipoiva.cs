@@ -7,7 +7,7 @@ namespace ProyectoFinal.Datos{
     public class Dtipoiva{
         ConexionBD cn = new ConexionBD();
 
-        public async Task<int> InsertarTipoiva(Mtipoiva parametros)
+        /*public async Task<int> InsertarTipoiva(Mtipoiva parametros)
         {
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
@@ -35,8 +35,52 @@ namespace ProyectoFinal.Datos{
                     return filasafectadas;
                 }
             }
+        }*/
 
+        public async Task<int> InsertarTipoiva(Mtipoiva parametros)
+        {
+            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            {
+                await npgsql.OpenAsync();
+                using (var transaction = await npgsql.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        string query = @"
+                            INSERT INTO TIPOIVA (codiva, numiva, desiva, codusu, codempresa, coheficiente)
+                            VALUES (
+                                (SELECT CASE WHEN MAX(codiva) IS NULL THEN 1 ELSE MAX(codiva) + 1 END AS codiva FROM tipoiva),
+                                @numiva,
+                                @desiva,
+                                @codusu,
+                                @codempresa,
+                                @coheficiente
+                            )";
 
+                        using (var cmd = new NpgsqlCommand(query, npgsql))
+                        {
+                            cmd.CommandType = System.Data.CommandType.Text;
+                            cmd.Parameters.AddWithValue("@numiva", parametros.numiva);
+                            cmd.Parameters.AddWithValue("@desiva", parametros.desiva);
+                            cmd.Parameters.AddWithValue("@codusu", parametros.codusu);
+                            cmd.Parameters.AddWithValue("@codempresa", parametros.codempresa);
+                            cmd.Parameters.AddWithValue("@coheficiente", parametros.coheficiente);
+                            cmd.Transaction = transaction; // Asocia el comando a la transacción
+
+                            int filasafectadas = await cmd.ExecuteNonQueryAsync();
+                            
+                            await transaction.CommitAsync(); // Confirma la transacción si todo va bien
+                            return filasafectadas;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync(); // Revierte la transacción en caso de error
+                        Console.WriteLine($"Error: {ex.Message}");
+                        throw; // Relanza la excepción para que pueda manejarse externamente si es necesario
+                    }
+                }
+            }
         }
 
          public async Task<string> Eliminartipoiva(Mtipoiva parametros)

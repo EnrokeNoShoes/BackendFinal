@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Final.Modelo;
 using ProyectoFinal.Datos;
@@ -5,6 +7,7 @@ using ProyectoFinal.Datos;
 namespace ProyectoFinal.Controllers{
 
     [ApiController]
+    [Authorize]
     [Route("api/tipoiva")]
     public class TipoivaController : ControllerBase
     {
