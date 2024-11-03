@@ -100,7 +100,7 @@ namespace ProyectoFinal.Datos{
             }
         }
 
-         public async Task<List<Mtipoiva>> MostrarTipoiva() 
+        /* public async Task<List<Mtipoiva>> MostrarTipoiva() 
         {
             var lista = new List<Mtipoiva>();
 
@@ -108,11 +108,41 @@ namespace ProyectoFinal.Datos{
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
                 // Ejecutar la función sin parámetro
-                using (var cmd = new NpgsqlCommand("SELECT numiva,desiva,coheficiente FROM tipoiva tv", npgsql))
+                using (var cmd = new NpgsqlCommand("SELECT numiva,desiva,coheficiente,codempresa,codusu FROM tipoiva tv", npgsql))
                 { 
                     await npgsql.OpenAsync();
                     
                     // Ejecutar la consulta
+                    using (var item = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await item.ReadAsync())
+                        {
+                            var mtipoiva = new Mtipoiva();
+                            mtipoiva.numiva = (string)item["numiva"];
+                            mtipoiva.desiva = (string)item["desiva"];
+                            mtipoiva.coheficiente = (decimal)item["coheficiente"];
+                            mtipoiva.codempresa = (int)item["codempresa"];
+                            mtipoiva.codempresa = (int)item["codusu"];
+                            lista.Add(mtipoiva);
+                        }
+                    }
+                }
+            }
+
+            return lista;
+        }*/
+
+        public async Task<List<Mtipoiva>> MostrarTipoiva(int codEmpresa) 
+        {
+            var lista = new List<Mtipoiva>();
+
+            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            {
+                using (var cmd = new NpgsqlCommand("SELECT numiva, desiva, coheficiente FROM tipoiva WHERE codempresa = @codempresa", npgsql))
+                {
+                    cmd.Parameters.AddWithValue("@codempresa", codEmpresa);
+                    await npgsql.OpenAsync();
+                    
                     using (var item = await cmd.ExecuteReaderAsync())
                     {
                         while (await item.ReadAsync())
@@ -129,6 +159,8 @@ namespace ProyectoFinal.Datos{
 
             return lista;
         }
+
+
 
         public async Task<Mtipoiva> MostrarIvaporID(int id)
         {

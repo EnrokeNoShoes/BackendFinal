@@ -67,6 +67,7 @@ namespace ProyectoFinal.Datos{
                         while (await item.ReadAsync())
                         {
                             var mempresa = new Mempresa();
+                            mempresa.codempresa = (int)item["codempresa"];
                             mempresa.rucempresa = (string)item["rucempresa"];
                             mempresa.razonsocial = (string)item["razonsocial"];
                             mempresa.propietario = (string)item["propietario"];

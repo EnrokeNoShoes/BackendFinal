@@ -6,8 +6,8 @@ using ProyectoFinal.Datos;
 
 namespace ProyectoFinal.Controllers{
 
-    [ApiController]
-    [Authorize]
+   /* [ApiController]
+    [Authorize]*/
     [Route("api/tipoiva")]
     public class TipoivaController : ControllerBase
     {
@@ -27,13 +27,13 @@ namespace ProyectoFinal.Controllers{
             await funcion.Eliminartipoiva(paramateros);
             return NoContent();
         }
-        [HttpGet]
-        public async Task<ActionResult<List<Mtipoiva>>> Get()
+        /*[HttpGet]
+        public async Task<ActionResult<List<Mtipoiva>>> Get(int codempresa)
         {
             var funcion = new Dtipoiva();
-            var lista = await funcion.MostrarTipoiva();
+            var lista = await funcion.MostrarTipoiva(codempresa);
             return lista;
-        } 
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Mtipoiva>> Get(int id)
@@ -45,7 +45,31 @@ namespace ProyectoFinal.Controllers{
                 return NotFound(); // Retorna un 404 Not Found
             }
             return Ok(tipoiva); // Retorna un 200 OK con el objeto de la empresa
+        }*/
+
+        [HttpGet]
+        public async Task<ActionResult> Get([FromQuery] int? codempresa, [FromQuery] int? id)
+        {
+            var funcion = new Dtipoiva();
+            
+            if (codempresa.HasValue)
+            {
+                var lista = await funcion.MostrarTipoiva(codempresa.Value);
+                return Ok(lista);
+            }
+            else if (id.HasValue)
+            {
+                var tipoiva = await funcion.MostrarIvaporID(id.Value);
+                if (tipoiva == null)
+                {
+                    return NotFound();
+                }
+                return Ok(tipoiva);
+            }
+            
+            return BadRequest("Debe proporcionar un codempresa o un id.");
         }
+
 
 
     }

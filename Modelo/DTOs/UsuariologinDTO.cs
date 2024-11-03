@@ -4,7 +4,7 @@
     {
         public string? NomUsu { get; set; }
         public string? PassUsu { get; set; }
-        public int CodGrupo { get; set; }
+        public int codempresa { get; set; }
 
     }
 }

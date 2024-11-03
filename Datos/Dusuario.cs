@@ -11,15 +11,16 @@ namespace ProyectoFinal.Datos{
         {
             _conexionBD = new ConexionBD(); // Puedes cambiar esto para recibir una instancia a través de inyección si es necesario
         }
-        public async Task<Musuario> ValidarUsuario(string nombreUsuario, string password)
+        public async Task<Musuario> ValidarUsuario(string nombreUsuario, string password, int codemp)
         {
             using (var npgsql = new NpgsqlConnection(_conexionBD.cadenaSQL()))
             {
                 await npgsql.OpenAsync();
-                using (var cmd = new NpgsqlCommand("SELECT codusu, codempresa, nomusu FROM usuarios WHERE nomusu = @nombreUsuario AND passusu = @password", npgsql))
+                using (var cmd = new NpgsqlCommand("SELECT codusu, codempresa, nomusu FROM usuarios WHERE nomusu = @nombreUsuario AND passusu = @password and codempresa = @codempresa", npgsql))
                 {
                     cmd.Parameters.AddWithValue("@nombreUsuario", nombreUsuario);
                     cmd.Parameters.AddWithValue("@password", password);
+                    cmd.Parameters.AddWithValue("@codempresa", codemp);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -27,10 +28,9 @@ namespace ProyectoFinal.Datos{
                         {
                             return new Musuario
                             {
-                                codusu = reader.GetInt32(0),                              
-                                codempresa = reader.GetInt32(1),
-                                nomusu = reader.GetString(2),
-                                // Otras propiedades...
+                                codusu = reader.GetInt32(0),      
+                                codempresa = reader.GetInt32(1),   
+                                nomusu = reader.GetString(2),                       
                             };
                         }
                     }

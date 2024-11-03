@@ -8,8 +8,8 @@ namespace ProyectoFinal.Modelo{
         public string passusu { get; set; }
         public int codgrupo { get; set; }
         public int codempresa { get; set; }
-         [JsonIgnore]
-         public Mempresa Empresa { get; set; }
+        /* [JsonIgnore]
+         public Mempresa Empresa { get; set; }*/
     }
 
 }
