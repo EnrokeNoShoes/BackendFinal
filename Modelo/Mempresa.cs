@@ -1,9 +1,7 @@
 using System.Text.Json.Serialization;
 
 namespace ProyectoFinal.Modelo{
-    public class Mempresa{
-
-            
+    public class Mempresa{    
             public int codempresa { get; set; }
             public string rucempresa { get; set; }
             public string razonsocial { get; set; }
