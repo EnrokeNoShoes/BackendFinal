@@ -9,6 +9,7 @@ namespace Proyecto_Final.Controller
     public class Consultapersonacontroller : ControllerBase
     {
     
+    
         [HttpGet("{numdoc}")]
         public async Task<ActionResult<Mconsultapersona>> Get(string numdoc)
         {
