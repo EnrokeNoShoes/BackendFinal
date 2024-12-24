@@ -10,6 +10,7 @@ namespace ProyectoFinal.Modelo
         public int codcomprobante { get; set; }
         public string numcomprobante { get; set; }
         public string descomprobante { get; set; }
+        public string numcomprobantepc{get; set;}
         public int codestado { get; set; }
         public string numestado { get; set; }
         public string desestado { get; set; }
