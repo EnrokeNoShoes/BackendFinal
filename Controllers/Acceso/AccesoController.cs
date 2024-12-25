@@ -25,7 +25,7 @@ namespace Proyecto_Final.Controllers
         {
             // Instancia de DUsuario para validar al usuario
             var usuarioService = new Dusuario();
-            var usuario = await usuarioService.ValidarUsuario(login.NomUsu, login.PassUsu, login.codempresa);
+            var usuario = await usuarioService.ValidarUsuario(login.NomUsu, login.PassUsu);
 
             if (usuario == null)
             {

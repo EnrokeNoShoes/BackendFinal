@@ -83,24 +83,46 @@ namespace ProyectoFinal.Datos{
             }
         }
 
-         public async Task<string> Eliminartipoiva(Mtipoiva parametros)
+        public async Task<string> Eliminartipoiva(int codiva)
         {
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Cambiar la forma en que se llama a la función
-                using (var cmd = new NpgsqlCommand("delete from tipoiva where codiva = @codiva", npgsql))
+                await npgsql.OpenAsync();
+                using (var transaction = await npgsql.BeginTransactionAsync())
                 {
-                    cmd.CommandType = CommandType.Text; // Cambiar a Text porque no es un Stored Procedure
-                    cmd.Parameters.AddWithValue("@codiva", parametros.codiva);
-                    
-                    await npgsql.OpenAsync();
-                    var resultado = await cmd.ExecuteScalarAsync(); // Utiliza ExecuteScalar para obtener el mensaje
-                    return resultado?.ToString();
+                    try
+                    {
+                        using (var cmd = new NpgsqlCommand("DELETE FROM tipoiva WHERE codiva = @codiva", npgsql))
+                        {
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Parameters.AddWithValue("@codiva", codiva);
+                            cmd.Transaction = transaction;
+
+                            int filasAfectadas = await cmd.ExecuteNonQueryAsync();
+                            
+                            if (filasAfectadas > 0)
+                            {
+                                await transaction.CommitAsync(); // Si se elimina correctamente, se confirma la transacción
+                                return "Eliminado correctamente";
+                            }
+                            else
+                            {
+                                await transaction.RollbackAsync(); // Si no se elimina, se revierte la transacción
+                                return "No se encontró el registro";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync(); // En caso de error, se revierte la transacción
+                        Console.WriteLine($"Error: {ex.Message}");
+                        throw;
+                    }
                 }
             }
         }
 
-        /* public async Task<List<Mtipoiva>> MostrarTipoiva() 
+        public async Task<List<Mtipoiva>> MostrarTipoiva() 
         {
             var lista = new List<Mtipoiva>();
 
@@ -130,9 +152,9 @@ namespace ProyectoFinal.Datos{
             }
 
             return lista;
-        }*/
+        }
 
-        public async Task<List<Mtipoiva>> MostrarTipoiva(int codEmpresa) 
+       /* public async Task<List<Mtipoiva>> MostrarTipoiva(int codEmpresa) 
         {
             var lista = new List<Mtipoiva>();
 
@@ -158,10 +180,7 @@ namespace ProyectoFinal.Datos{
             }
 
             return lista;
-        }
-
-
-
+        }*/
         public async Task<Mtipoiva> MostrarIvaporID(int id)
         {
             Mtipoiva mtipoiva = null; // Inicializar el objeto

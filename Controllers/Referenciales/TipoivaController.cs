@@ -6,48 +6,40 @@ using ProyectoFinal.Datos;
 
 namespace ProyectoFinal.Controllers{
 
-   /* [ApiController]
-    [Authorize]*/
+    [ApiController]
+    /*[Authorize]*/
     [Route("api/tipoiva")]
     public class TipoivaController : ControllerBase
     {
         [HttpPost]
+        [Route("insertar")]
         public async Task Post([FromBody] Mtipoiva parametros)
         {
             var funcion = new Dtipoiva();
             await funcion.InsertarTipoiva(parametros);
         }
-
-         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpDelete]
+        [Route("eliminar")]
+        public async Task<ActionResult> Delete([FromBody] Mtipoiva parametros)
         {
             var funcion = new Dtipoiva();
-            var paramateros = new Mtipoiva();
-            paramateros.codiva = id;
-            await funcion.Eliminartipoiva(paramateros);
-            return NoContent();
+            var resultado = await funcion.Eliminartipoiva(parametros.codiva);
+            if (resultado == "Eliminado correctamente")
+            {
+                return NoContent(); // No se devuelve contenido en caso de éxito
+            }
+            return NotFound(new { message = resultado }); // Si no se encontró el registro
         }
-        /*[HttpGet]
-        public async Task<ActionResult<List<Mtipoiva>>> Get(int codempresa)
+        [HttpGet]
+        [Route("lista")]
+        public async Task<ActionResult<List<Mtipoiva>>> Get()
         {
             var funcion = new Dtipoiva();
-            var lista = await funcion.MostrarTipoiva(codempresa);
+            var lista = await funcion.MostrarTipoiva();
             return lista;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Mtipoiva>> Get(int id)
-        {
-            var funcion = new Dtipoiva();
-            var tipoiva = await funcion.MostrarIvaporID(id); // Llama al método que obtiene la empresa por ID
-            if (tipoiva == null) // Si no se encuentra la empresa
-            {
-                return NotFound(); // Retorna un 404 Not Found
-            }
-            return Ok(tipoiva); // Retorna un 200 OK con el objeto de la empresa
-        }*/
-
-        [HttpGet]
+        /*[HttpGet]
         public async Task<ActionResult> Get([FromQuery] int? codempresa, [FromQuery] int? id)
         {
             var funcion = new Dtipoiva();
@@ -68,7 +60,7 @@ namespace ProyectoFinal.Controllers{
             }
             
             return BadRequest("Debe proporcionar un codempresa o un id.");
-        }
+        }*/
 
 
 

@@ -2,9 +2,9 @@
 {
     public class UsuariologinDTO
     {
-        public string? NomUsu { get; set; }
-        public string? PassUsu { get; set; }
-        public int codempresa { get; set; }
+        public string NomUsu { get; set; }
+        public string PassUsu { get; set; }
+
 
     }
 }

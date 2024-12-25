@@ -36,14 +36,13 @@ namespace ProyectoFinal.Custom
                  throw new ArgumentNullException(nameof(modelo), "El modelo no puede ser null.");
 
             // Verifica que las propiedades necesarias estén inicializadas
-            if (modelo.codusu == null || modelo.nomusu == null || modelo.codempresa == null)
-                throw new InvalidOperationException("El modelo debe contener valores válidos " +modelo.codempresa+ " para codusu, nomusu y codempresa.");
+            if (modelo.codusu == null || modelo.nomusu == null )
+                throw new InvalidOperationException("El modelo debe contener valores válidos para codusu, nomusu.");
 
             var userClaims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, modelo.codusu.ToString()),
                 new Claim(ClaimTypes.Name, modelo.nomusu.ToString()),
-                new Claim(ClaimTypes.Role, modelo.codempresa.ToString())
             };
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:key"]));
             var credential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);

@@ -20,8 +20,6 @@ namespace Proyecto_Final.Controller
             }
             return Ok(pedido); 
         }
-
-
         [HttpGet]
         [Route("lista")]
         public async Task<ActionResult<Mpedidocompra>> GetList()
@@ -35,7 +33,6 @@ namespace Proyecto_Final.Controller
             }
             return Ok(pedido); 
         }
-
         [HttpPost]
         [Route("crear")]
         public async Task<ActionResult> PostPedidoCompra([FromBody] Mpedidocompra pedido)
