@@ -26,9 +26,9 @@ namespace ProyectoFinal.Controllers{
             var resultado = await funcion.Eliminartipoiva(parametros.codiva);
             if (resultado == "Eliminado correctamente")
             {
-                return NoContent(); // No se devuelve contenido en caso de éxito
+                return NoContent();
             }
-            return NotFound(new { message = resultado }); // Si no se encontró el registro
+            return NotFound(new { message = resultado });
         }
         [HttpGet]
         [Route("lista")]
@@ -38,31 +38,6 @@ namespace ProyectoFinal.Controllers{
             var lista = await funcion.MostrarTipoiva();
             return lista;
         }
-
-        /*[HttpGet]
-        public async Task<ActionResult> Get([FromQuery] int? codempresa, [FromQuery] int? id)
-        {
-            var funcion = new Dtipoiva();
-            
-            if (codempresa.HasValue)
-            {
-                var lista = await funcion.MostrarTipoiva(codempresa.Value);
-                return Ok(lista);
-            }
-            else if (id.HasValue)
-            {
-                var tipoiva = await funcion.MostrarIvaporID(id.Value);
-                if (tipoiva == null)
-                {
-                    return NotFound();
-                }
-                return Ok(tipoiva);
-            }
-            
-            return BadRequest("Debe proporcionar un codempresa o un id.");
-        }*/
-
-
 
     }
 

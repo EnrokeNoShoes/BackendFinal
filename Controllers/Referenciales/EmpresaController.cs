@@ -31,12 +31,12 @@ namespace ProyectoFinal.Controllers{
         public async Task<ActionResult<Mempresa>> Get(int id)
         {
             var funcion = new Dempresa();
-            var empresa = await funcion.MostrarEmpresaPorId(id); // Llama al método que obtiene la empresa por ID
-            if (empresa == null) // Si no se encuentra la empresa
+            var empresa = await funcion.MostrarEmpresaPorId(id);
+            if (empresa == null) 
             {
-                return NotFound(); // Retorna un 404 Not Found
+                return NotFound();
             }
-            return Ok(empresa); // Retorna un 200 OK con el objeto de la empresa
+            return Ok(empresa);
         }
 
         [HttpGet]
@@ -64,7 +64,7 @@ namespace ProyectoFinal.Controllers{
             {
                 return NotFound($"No se pudo modificar la empresa: {ex.Message}");
             }
-            return NoContent(); // Devuelve 204 No Content si la modificación fue exitosa
+            return NoContent();
         } 
     }
 }

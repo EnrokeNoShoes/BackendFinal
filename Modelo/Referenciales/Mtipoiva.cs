@@ -10,7 +10,7 @@ namespace Proyecto_Final.Modelo
         public string desiva { get; set; }
         public decimal coheficiente { get; set; }
         public int codusu { get; set; }
-        public int codempresa { get; set; }
+    
         
     }
 }

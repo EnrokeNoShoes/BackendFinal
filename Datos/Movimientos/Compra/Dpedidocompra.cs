@@ -87,7 +87,6 @@ namespace ProyectoFinal.Datos{
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
                 await npgsql.OpenAsync();
-                // Consulta para obtener las cabeceras de los pedidos
                 string consultaCabecera = @"
                     select pc.codpedidocompra, pc.codcomprobante, tp.numcomprobante as tipocomprobante, tp.descomprobante, 
                         pc.numcomprobante as numeroregistro, pc.fechapedido, pc.codestado,
@@ -121,14 +120,13 @@ namespace ProyectoFinal.Datos{
                                 desestado = (string)readerCabecera["desestado"],
                                 codusu = (int)readerCabecera["codusu"],
                                 nomusu = (string)readerCabecera["nomusu"],
-                                Detalles = new List<Mdetallepedidocompra>() // Inicializar lista de detalles
+                                Detalles = new List<Mdetallepedidocompra>()
                             };
 
                             pedidos.Add(pedido);
                         }
                     }
                 }
-                // Consulta para obtener los detalles, filtrando por codpedidocompra
                 string consultaDetalles = @"
                     select pcd.codpedidocompra, pcd.codproducto, prd.codigobarra, prd.desproducto, 
                         pcd.cantidad, pcd.costoulitmo
@@ -165,8 +163,6 @@ namespace ProyectoFinal.Datos{
             }
             return pedidos;
         }
-
-
         public async Task<int> InsertarPedidoCompra(Mpedidocompra pedidoCompra)
         {
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
@@ -224,12 +220,12 @@ namespace ProyectoFinal.Datos{
                             }
                         }
 
-                        await transaction.CommitAsync(); // Confirma la transacción
-                        return pedidoCompra.codpedidocompra; // Retorna el ID del pedido insertado
+                        await transaction.CommitAsync();
+                        return pedidoCompra.codpedidocompra;
                     }
                     catch (Exception ex)
                     {
-                        await transaction.RollbackAsync(); // Revertir la transacción en caso de error
+                        await transaction.RollbackAsync();
                         Console.WriteLine($"Error: {ex.Message}");
                         throw;
                     }
@@ -261,7 +257,7 @@ namespace ProyectoFinal.Datos{
                             int filasAfectadas = await cmd.ExecuteNonQueryAsync();
 
                             await transaction.CommitAsync();
-                            return filasAfectadas; // Retorna el número de filas actualizadas
+                            return filasAfectadas;
                         }
                     }
                     catch (Exception ex)

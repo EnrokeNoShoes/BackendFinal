@@ -9,22 +9,18 @@ namespace ProyectoFinal.Datos{
         ConexionBD cn = new ConexionBD();
         public async Task<Mconsultapersona> Mostrarpersona(string numdoc)
         {
-            Mconsultapersona mconsultapersona = null; // Inicializar el objeto
+            Mconsultapersona mconsultapersona = null;
 
-            // Usar la conexión a PostgreSQL
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Ejecutar la función con el parámetro id para obtener un solo registro
-                using (var cmd = new NpgsqlCommand("SELECT * FROM public.rucpersona_empresa(@id)", npgsql)) // Asegúrate de que tu función se llame correctamente
+                using (var cmd = new NpgsqlCommand("SELECT * FROM public.rucpersona_empresa(@id)", npgsql)) 
                 {
-                    cmd.Parameters.AddWithValue("@id", numdoc); // Agregar el parámetro
+                    cmd.Parameters.AddWithValue("@id", numdoc);
 
                     await npgsql.OpenAsync();
-
-                    // Ejecutar la consulta
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        if (await reader.ReadAsync()) // Solo leer el primer registro
+                        if (await reader.ReadAsync())
                         {
                             mconsultapersona = new Mconsultapersona
                             {
@@ -38,7 +34,7 @@ namespace ProyectoFinal.Datos{
                     }
                 }
             }
-            return mconsultapersona; // Retornar el objeto encontrado o null si no se encontró
+            return mconsultapersona;
         }
     }
 
