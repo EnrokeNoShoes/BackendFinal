@@ -12,7 +12,6 @@ namespace ProyectoFinal.Datos{
         {
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Usamos SELECT porque la función retorna un valor
                 using (var cmd = new NpgsqlCommand("SELECT public.insertarempresa(@rucempresa, @razonsocial, @propietario, @ruc_ci, @nrotelefono, @direccion, @actividadeconomica)", npgsql))
                 {
                     cmd.CommandType = CommandType.Text;
@@ -24,9 +23,7 @@ namespace ProyectoFinal.Datos{
                     cmd.Parameters.AddWithValue("@direccion", parametros.direccion);
                     cmd.Parameters.AddWithValue("@actividadeconomica", parametros.actividadeconomica);
                     await npgsql.OpenAsync();
-                    // Ejecutamos el comando y obtenemos el valor de retorno
                     var result = await cmd.ExecuteScalarAsync();                   
-                    // Convertimos el resultado a string y lo retornamos
                     return result.ToString();
                 }
             }
@@ -39,11 +36,11 @@ namespace ProyectoFinal.Datos{
                 // Cambiar la forma en que se llama a la función
                 using (var cmd = new NpgsqlCommand("SELECT public.eliminar_empresa(@codempresa)", npgsql))
                 {
-                    cmd.CommandType = CommandType.Text; // Cambiar a Text porque no es un Stored Procedure
+                    cmd.CommandType = CommandType.Text;
                     cmd.Parameters.AddWithValue("@codempresa", parametrosmpresa.codempresa);
                     
                     await npgsql.OpenAsync();
-                    var resultado = await cmd.ExecuteScalarAsync(); // Utiliza ExecuteScalar para obtener el mensaje
+                    var resultado = await cmd.ExecuteScalarAsync();
                     return resultado?.ToString();
                 }
             }
@@ -52,16 +49,12 @@ namespace ProyectoFinal.Datos{
         public async Task<List<Mempresa>> MostrarEmpresa() 
         {
             var lista = new List<Mempresa>();
-
-            // Usar la conexión a PostgreSQL
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Ejecutar la función sin parámetro
                 using (var cmd = new NpgsqlCommand("SELECT * FROM public.mostarempresa()", npgsql))
                 { 
                     await npgsql.OpenAsync();
                     
-                    // Ejecutar la consulta
                     using (var item = await cmd.ExecuteReaderAsync())
                     {
                         while (await item.ReadAsync())
@@ -86,22 +79,20 @@ namespace ProyectoFinal.Datos{
 
         public async Task<Mempresa> MostrarEmpresaPorId(int id)
         {
-            Mempresa mempresa = null; // Inicializar el objeto
+            Mempresa mempresa = null;
 
-            // Usar la conexión a PostgreSQL
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Ejecutar la función con el parámetro id para obtener un solo registro
-                using (var cmd = new NpgsqlCommand("SELECT * FROM public.mostarempresa_por_id(@id)", npgsql)) // Asegúrate de que tu función se llame correctamente
+                using (var cmd = new NpgsqlCommand("SELECT * FROM public.mostarempresa_por_id(@id)", npgsql)) 
                 {
-                    cmd.Parameters.AddWithValue("@id", id); // Agregar el parámetro
+                    cmd.Parameters.AddWithValue("@id", id);
 
                     await npgsql.OpenAsync();
 
                     // Ejecutar la consulta
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        if (await reader.ReadAsync()) // Solo leer el primer registro
+                        if (await reader.ReadAsync()) 
                         {
                             mempresa = new Mempresa
                             {
@@ -118,7 +109,7 @@ namespace ProyectoFinal.Datos{
                 }
             }
             return
-             mempresa; // Retornar el objeto encontrado o null si no se encontró
+             mempresa;
         }
 
         public async Task ModificarEmpresa(Mempresa parametros, int codempresa)
@@ -137,7 +128,7 @@ namespace ProyectoFinal.Datos{
                     cmd.Parameters.AddWithValue("@actividadeconomica", parametros.actividadeconomica);
 
                     await npgsql.OpenAsync();
-                    await cmd.ExecuteNonQueryAsync(); // Ejecuta la función
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
         }
@@ -152,7 +143,7 @@ namespace ProyectoFinal.Datos{
                     await npgsql.OpenAsync();
 
                     var result = await cmd.ExecuteScalarAsync();
-                    return (long)result > 0; // Retorna true si hay al menos una fila
+                    return (long)result > 0;
                 }
             }
         }

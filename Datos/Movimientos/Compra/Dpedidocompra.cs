@@ -40,7 +40,7 @@ namespace ProyectoFinal.Datos{
                             pedido.dessuc = (string)reader["dessucu"];
                             pedido.fechapedido = reader["fechapedido"].ToString();
                             pedido.codcomprobante = (int)reader["codcomprobante"];
-                            pedido.numcomprobante = (string)reader["numcomprobante"];
+                            pedido.numcomprobante = (string)reader["tipocomprobante"];
                             pedido.numcomprobantepc = (string)reader["numeroregistro"];
                             pedido.descomprobante = (string)reader["descomprobante"];
                             pedido.codestado = (int)reader["codestado"];
@@ -136,10 +136,9 @@ namespace ProyectoFinal.Datos{
 
                 using (var cmdDetalle = new NpgsqlCommand(consultaDetalles, npgsql))
                 {
-                    // Iterar sobre los pedidos y agregar sus detalles
                     foreach (var pedido in pedidos)
                     {
-                        cmdDetalle.Parameters.Clear(); // Limpiar parámetros previos
+                        cmdDetalle.Parameters.Clear();
                         cmdDetalle.Parameters.AddWithValue("@codpedidocompra", pedido.codpedidocompra);
 
                         using (var readerDetalle = await cmdDetalle.ExecuteReaderAsync())

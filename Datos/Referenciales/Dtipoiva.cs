@@ -32,19 +32,19 @@ namespace ProyectoFinal.Datos{
                             cmd.Parameters.AddWithValue("@desiva", parametros.desiva);
                             cmd.Parameters.AddWithValue("@codusu", parametros.codusu);
                             cmd.Parameters.AddWithValue("@coheficiente", parametros.coheficiente);
-                            cmd.Transaction = transaction; // Asocia el comando a la transacción
+                            cmd.Transaction = transaction; 
 
                             int filasafectadas = await cmd.ExecuteNonQueryAsync();
                             
-                            await transaction.CommitAsync(); // Confirma la transacción si todo va bien
+                            await transaction.CommitAsync(); 
                             return filasafectadas;
                         }
                     }
                     catch (Exception ex)
                     {
-                        await transaction.RollbackAsync(); // Revierte la transacción en caso de error
+                        await transaction.RollbackAsync(); 
                         Console.WriteLine($"Error: {ex.Message}");
-                        throw; // Relanza la excepción para que pueda manejarse externamente si es necesario
+                        throw; 
                     }
                 }
             }
@@ -69,19 +69,19 @@ namespace ProyectoFinal.Datos{
                             
                             if (filasAfectadas > 0)
                             {
-                                await transaction.CommitAsync(); // Si se elimina correctamente, se confirma la transacción
+                                await transaction.CommitAsync();
                                 return "Eliminado correctamente";
                             }
                             else
                             {
-                                await transaction.RollbackAsync(); // Si no se elimina, se revierte la transacción
+                                await transaction.RollbackAsync();
                                 return "No se encontró el registro";
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        await transaction.RollbackAsync(); // En caso de error, se revierte la transacción
+                        await transaction.RollbackAsync();
                         Console.WriteLine($"Error: {ex.Message}");
                         throw;
                     }
@@ -93,15 +93,12 @@ namespace ProyectoFinal.Datos{
         {
             var lista = new List<Mtipoiva>();
 
-            // Usar la conexión a PostgreSQL
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Ejecutar la función sin parámetro
                 using (var cmd = new NpgsqlCommand("SELECT numiva,desiva,coheficiente,codusu FROM tipoiva tv", npgsql))
                 { 
                     await npgsql.OpenAsync();
-                    
-                    // Ejecutar la consulta
+
                     using (var item = await cmd.ExecuteReaderAsync())
                     {
                         while (await item.ReadAsync())
@@ -121,22 +118,20 @@ namespace ProyectoFinal.Datos{
         }
         public async Task<Mtipoiva> MostrarIvaporID(int id)
         {
-            Mtipoiva mtipoiva = null; // Inicializar el objeto
+            Mtipoiva mtipoiva = null;
 
-            // Usar la conexión a PostgreSQL
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
-                // Ejecutar la función con el parámetro id para obtener un solo registro
-                using (var cmd = new NpgsqlCommand("SELECT numiva,desiva,coheficiente FROM tipoiva where codiva = @id", npgsql)) // Asegúrate de que tu función se llame correctamente
+                using (var cmd = new NpgsqlCommand("SELECT numiva,desiva,coheficiente FROM tipoiva where codiva = @id", npgsql))
                 {
-                    cmd.Parameters.AddWithValue("@id", id); // Agregar el parámetro
+                    cmd.Parameters.AddWithValue("@id", id); 
 
                     await npgsql.OpenAsync();
 
                     // Ejecutar la consulta
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        if (await reader.ReadAsync()) // Solo leer el primer registro
+                        if (await reader.ReadAsync()) 
                         {
                             mtipoiva = new Mtipoiva
                             {
@@ -149,7 +144,7 @@ namespace ProyectoFinal.Datos{
                 }
             }
             return
-             mtipoiva; // Retornar el objeto encontrado o null si no se encontró
+             mtipoiva; 
         }
 
 
