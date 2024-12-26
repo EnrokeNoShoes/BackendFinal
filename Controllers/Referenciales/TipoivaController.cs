@@ -38,6 +38,26 @@ namespace ProyectoFinal.Controllers{
             var lista = await funcion.MostrarTipoiva();
             return lista;
         }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<Mtipoiva>>> GetID(int id)
+        {
+            var funcion = new Dtipoiva();
+            var tipoiva = await funcion.MostrarIvaporID(id);
+            if (tipoiva == null) 
+            {
+                return NotFound();
+            }
+            return Ok(tipoiva);
+        }
+   
+        [HttpPut]
+        [Route("modificar")]
+        public async Task Put([FromBody] Mtipoiva parametros)
+        {
+            var funcion = new Dtipoiva();
+            await funcion.ModificarTipoIva(parametros.codiva,parametros.desiva, parametros.coheficiente);
+        }
+
 
     }
 

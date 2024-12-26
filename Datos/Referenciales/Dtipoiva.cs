@@ -143,8 +143,39 @@ namespace ProyectoFinal.Datos{
                     }
                 }
             }
-            return
-             mtipoiva; 
+            return mtipoiva; 
+        }
+
+        public async Task<Mtipoiva> ModificarTipoIva(int id, string descripcion, decimal coheficiente)
+        {
+            Mtipoiva mtipoiva = null;
+            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            {
+                await npgsql.OpenAsync();
+                using (var transaction = await npgsql.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        using (var cmd = new NpgsqlCommand("UPDATE tipoiva SET desiva = @descripcion, coheficiente = @coheficiente WHERE codiva = @id", npgsql))
+                        {
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.Parameters.AddWithValue("@descripcion", descripcion);
+                            cmd.Parameters.AddWithValue("@coheficiente", coheficiente);
+
+                            cmd.Transaction = transaction;
+                            await cmd.ExecuteNonQueryAsync(); // Ejecutar el comando
+                        }
+
+                        await transaction.CommitAsync();
+                    }
+                    catch
+                    {
+                        await transaction.RollbackAsync();
+                        throw; // Propaga el error para manejo posterior
+                    }
+                }
+            }
+            return mtipoiva;
         }
 
 

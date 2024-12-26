@@ -108,8 +108,7 @@ namespace ProyectoFinal.Datos{
                     }
                 }
             }
-            return
-             mempresa;
+            return mempresa;
         }
 
         public async Task ModificarEmpresa(Mempresa parametros, int codempresa)
