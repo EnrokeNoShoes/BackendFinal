@@ -34,7 +34,7 @@ namespace Proyecto_Final.Controller
             return Ok(pedido); 
         }
         [HttpPost]
-        [Route("crear")]
+        [Route("nuevo")]
         public async Task<ActionResult> PostPedidoCompra([FromBody] Mpedidocompra pedido)
         {
             var funcion = new Dpedidocompra();
@@ -53,17 +53,23 @@ namespace Proyecto_Final.Controller
         [Route("anular")]
         public async Task<ActionResult> PutActualizarEstado([FromBody] Mpedidocompra pedido)
         {
-            var funcion = new Dpedidocompra();
-            int filasAfectadas = await funcion.ActualizarEstadoPedidoCompra(pedido.codpedidocompra, pedido.codestado);
+            try{
 
-            if (filasAfectadas > 0)
-            {
-                return Ok(new { message = "Estado del pedido actualizado correctamente." });
+                var funcion = new Dpedidocompra();
+                int filasAfectadas = await funcion.ActualizarEstadoPedidoCompra(pedido.codpedidocompra, pedido.codestado);
+
+                if (filasAfectadas > 0)
+                {
+                    return Ok(new { message = "Estado del pedido actualizado correctamente." });
+                }
+                    else
+                {
+                    return NotFound(new { message = "No se encontró el pedido con el código especificado." });
+                }
+            }catch (Exception ex){
+                return BadRequest(new { Error = ex.Message });
             }
-            else
-            {
-                return NotFound(new { message = "No se encontró el pedido con el código especificado." });
-            }
+            
         }
 
     }

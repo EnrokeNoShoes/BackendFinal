@@ -8,6 +8,7 @@ namespace ProyectoFinal.Datos{
     public class Dpedidocompra{
 
         ConexionBD cn = new ConexionBD();
+        PedidosCompras_sql query = new PedidosCompras_sql();
         public async Task<Mpedidocompra> ObtenerPedidoCompraPorId(int id)
         {
             var pedido = new Mpedidocompra();
@@ -15,16 +16,7 @@ namespace ProyectoFinal.Datos{
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
                 await npgsql.OpenAsync();
-                string consultaCabecera = @"
-                    select pc.codpedidocompra,pc.codcomprobante, tp.numcomprobante as tipocomprobante,tp.descomprobante, pc.numcomprobante as numeroregistro, pc.fechapedido,pc.codestado,
-                    em.numestado, em.desestado,  
-                    pc.codsucursal, s.numsuc, s.dessucu, pc.codusu, u.nomusu
-                    from pedidocompra pc
-                    inner join sucursal s on pc.codsucursal = s.codsucursal
-                    inner join comprobante tp on pc.codcomprobante = tp.codcomprobante
-                    inner join estadomovimiento em on pc.codestado = em.codestado
-                    inner join usuarios u on pc.codusu = u.codusu
-                    where pc.codpedidocompra = @Id";
+                string consultaCabecera = query.Select(1);
 
                 using (var cmd = new NpgsqlCommand(consultaCabecera, npgsql))
                 {
@@ -51,11 +43,7 @@ namespace ProyectoFinal.Datos{
                         }
                     }
                 }
-                string consultaDetalles = @"
-                    select pcd.codpedidocompra, pcd.codproducto, prd.codigobarra , prd.desproducto, pcd.cantidad, pcd.costoulitmo
-                    from pedidocompra_det pcd
-                    inner join producto prd on pcd.codproducto = prd.codproducto where pcd.codpedidocompra = @Id";
-
+                string consultaDetalles = query.SelectDet(1);
                 using (var cmd = new NpgsqlCommand(consultaDetalles, npgsql))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
@@ -80,23 +68,13 @@ namespace ProyectoFinal.Datos{
             }
             return pedido;
         }    
-
         public async Task<List<Mpedidocompra>> ObtenerPedidoCompraLista()
         {
             var pedidos = new List<Mpedidocompra>();
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
                 await npgsql.OpenAsync();
-                string consultaCabecera = @"
-                    select pc.codpedidocompra, pc.codcomprobante, tp.numcomprobante as tipocomprobante, tp.descomprobante, 
-                        pc.numcomprobante as numeroregistro, pc.fechapedido, pc.codestado,
-                        em.numestado, em.desestado,  
-                        pc.codsucursal, s.numsuc, s.dessucu, pc.codusu, u.nomusu
-                    from pedidocompra pc
-                    inner join sucursal s on pc.codsucursal = s.codsucursal
-                    inner join comprobante tp on pc.codcomprobante = tp.codcomprobante
-                    inner join estadomovimiento em on pc.codestado = em.codestado
-                    inner join usuarios u on pc.codusu = u.codusu";
+                string consultaCabecera = query.Select(2);
 
                 using (var cmdCabecera = new NpgsqlCommand(consultaCabecera, npgsql))
                 {
@@ -127,13 +105,7 @@ namespace ProyectoFinal.Datos{
                         }
                     }
                 }
-                string consultaDetalles = @"
-                    select pcd.codpedidocompra, pcd.codproducto, prd.codigobarra, prd.desproducto, 
-                        pcd.cantidad, pcd.costoulitmo
-                    from pedidocompra_det pcd
-                    inner join producto prd on pcd.codproducto = prd.codproducto
-                    where pcd.codpedidocompra = @codpedidocompra";
-
+                string consultaDetalles = query.SelectDet(2);
                 using (var cmdDetalle = new NpgsqlCommand(consultaDetalles, npgsql))
                 {
                     foreach (var pedido in pedidos)
@@ -172,18 +144,7 @@ namespace ProyectoFinal.Datos{
                     try
                     {
                         // Insertar cabecera del pedido
-                        string queryCabecera = @"
-                            INSERT INTO pedidocompra (codpedidocompra, codcomprobante, numcomprobante, fechapedido, codestado, codsucursal, codusu)
-                            VALUES (
-                                (SELECT COALESCE(MAX(codpedidocompra), 0) + 1 FROM pedidocompra),
-                                @codcomprobante,
-                                @numcomprobante,
-                                @fechapedido,
-                                @codestado,
-                                @codsucursal,
-                                @codusu
-                            )
-                            RETURNING codpedidocompra";
+                        string queryCabecera = query.Insert();
 
                         using (var cmdCabecera = new NpgsqlCommand(queryCabecera, npgsql))
                         {
@@ -202,9 +163,7 @@ namespace ProyectoFinal.Datos{
                         // Insertar detalles del pedido
                         foreach (var detalle in pedidoCompra.Detalles)
                         {
-                            string queryDetalle = @"
-                                INSERT INTO pedidocompra_det (codpedidocompra, codproducto, cantidad, costoulitmo)
-                                VALUES (@codpedidocompra, @codproducto, @cantidad, @costoulitmo)";
+                            string queryDetalle = query.InsertDet();
 
                             using (var cmdDetalle = new NpgsqlCommand(queryDetalle, npgsql))
                             {
@@ -214,7 +173,6 @@ namespace ProyectoFinal.Datos{
                                 cmdDetalle.Parameters.AddWithValue("@cantidad", detalle.cantidad);
                                 cmdDetalle.Parameters.AddWithValue("@costoulitmo", detalle.costoulitmo);
                                 cmdDetalle.Transaction = transaction;
-
                                 await cmdDetalle.ExecuteNonQueryAsync();
                             }
                         }
@@ -231,7 +189,6 @@ namespace ProyectoFinal.Datos{
                 }
             }
         }
-
         public async Task<int> ActualizarEstadoPedidoCompra(int codpedidocompra, int codestado)
         {
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
@@ -241,12 +198,27 @@ namespace ProyectoFinal.Datos{
                 {
                     try
                     {
-                        string query = @"
-                            UPDATE pedidocompra
-                            SET codestado = @codestado
-                            WHERE codpedidocompra = @codpedidocompra";
+                        string consultaEstado = query.Select(3);
 
-                        using (var cmd = new NpgsqlCommand(query, npgsql))
+                        using (var cmdValidar = new NpgsqlCommand(consultaEstado, npgsql))
+                        {
+                            cmdValidar.Parameters.AddWithValue("@codpedidocompra", codpedidocompra);
+                            cmdValidar.Transaction = transaction;
+
+                            var estadoActual = await cmdValidar.ExecuteScalarAsync();
+
+                            switch ((int)estadoActual){
+                                case 2:
+                                    throw new Exception("El pedido de compra ya se encuentra anulado.");
+                                case 3: 
+                                    throw new Exception("El pedido de compra ya fue utilizado.");
+                                case 4:
+                                    throw new Exception("El pedido de compra no se puede utilizar ya supero los dias.");
+                            }
+                        }
+                        string actulizarestado = query.Update() ;
+
+                        using (var cmd = new NpgsqlCommand(actulizarestado, npgsql))
                         {
                             cmd.CommandType = System.Data.CommandType.Text;
                             cmd.Parameters.AddWithValue("@codpedidocompra", codpedidocompra);
