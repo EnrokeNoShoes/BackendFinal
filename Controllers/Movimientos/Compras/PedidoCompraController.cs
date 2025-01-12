@@ -8,10 +8,11 @@ namespace Proyecto_Final.Controller
     [Route("api/pedidocompra")]
     public class PedidoCompraController : ControllerBase
     {
+        Dpedidocompra funcion = new Dpedidocompra();
         [HttpGet("{id}")]
         public async Task<ActionResult<Mpedidocompra>> Get(int id)
         {
-            var funcion = new Dpedidocompra();
+            
             var pedido = await funcion.ObtenerPedidoCompraPorId(id);
 
             if (pedido == null) 
@@ -24,7 +25,7 @@ namespace Proyecto_Final.Controller
         [Route("lista")]
         public async Task<ActionResult<Mpedidocompra>> GetList()
         {
-            var funcion = new Dpedidocompra();
+            
             var pedido = await funcion.ObtenerPedidoCompraLista();
 
             if (pedido == null) 
@@ -37,7 +38,6 @@ namespace Proyecto_Final.Controller
         [Route("nuevo")]
         public async Task<ActionResult> PostPedidoCompra([FromBody] Mpedidocompra pedido)
         {
-            var funcion = new Dpedidocompra();
             int resultado = await funcion.InsertarPedidoCompra(pedido);
 
             if (resultado > 0)
@@ -54,8 +54,6 @@ namespace Proyecto_Final.Controller
         public async Task<ActionResult> PutActualizarEstado([FromBody] Mpedidocompra pedido)
         {
             try{
-
-                var funcion = new Dpedidocompra();
                 int filasAfectadas = await funcion.ActualizarEstadoPedidoCompra(pedido.codpedidocompra, pedido.codestado);
 
                 if (filasAfectadas > 0)

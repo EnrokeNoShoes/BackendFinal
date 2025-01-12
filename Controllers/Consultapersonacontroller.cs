@@ -8,17 +8,13 @@ namespace Proyecto_Final.Controller
     [Route("api/consultapersona")]
     public class Consultapersonacontroller : ControllerBase
     {
+        Dconsultapersona funcion = new Dconsultapersona();
        
         [HttpGet("{numdoc}")]
         public async Task<ActionResult<Mconsultapersona>> Get(string numdoc)
         {
-            var funcion = new Dconsultapersona();
-            var empresa = await funcion.Mostrarpersona(numdoc);
-            if (empresa == null)
-            {
-                return NotFound();
-            }
-            return Ok(empresa);
+            var persona = await funcion.Mostrarpersona(numdoc);
+            return persona == null ? NotFound(): Ok(persona);
         }
     }
 
