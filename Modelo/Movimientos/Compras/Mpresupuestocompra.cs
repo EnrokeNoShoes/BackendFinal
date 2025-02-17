@@ -14,6 +14,7 @@ namespace ProyectoFinal.Fina{
         public decimal totalpresupuesto { get; set; }
         public decimal totaldescuento { get; set; }
         public int codestado { get; set; }
+        public List<Mpresupuestocompradet> Detalles { get; set; } = new List<Mpresupuestocompradet>();
     }
 
     public class Mpresupuestocompradet{

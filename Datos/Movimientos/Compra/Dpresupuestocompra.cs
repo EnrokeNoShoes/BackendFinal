@@ -12,7 +12,7 @@ namespace ProyectoFinal.Datos{
         PresupuestoCompra_sql query = new PresupuestoCompra_sql();
         public async Task<Mpresupuestocompra> ObtenerPresupuestoCompraPorId(int id)
         {
-            var presupustocompra = new Mpresupuestocompra();
+            var presupuestocompra = new Mpresupuestocompra();
 
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
@@ -26,13 +26,30 @@ namespace ProyectoFinal.Datos{
                     {
                         if (await reader.ReadAsync())
                         {
-                            presupustocompra.codpresupuestocompra = (int)reader["codpresupuestocompra"];
+                            presupuestocompra.codpresupuestocompra = (int)reader["codpresupuestocompra"];
                         }
                     }
                 }
+                string consultaDetalles = query.SelectDet(1);
+                using (var cmd = new NpgsqlCommand(consultaDetalles, npgsql))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
 
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var detalle = new Mpresupuestocompradet
+                            {
+                                codpresupuestocompra = (int)reader["codpresupuestocompra"],	
+
+                            };
+                            presupuestocompra.Detalles.Add(detalle);
+                        }
+                    }
+                }
             }
-
+            return presupuestocompra;
         }
         
 

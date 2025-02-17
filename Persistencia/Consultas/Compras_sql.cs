@@ -164,7 +164,7 @@ namespace ProyectoFinal.Persistencia
                     return  @"
                     select *
                     from presupuestocompra_det pcd
-                    inner join producto prd on pcd.codproducto = prd.codproducto where pcd.codpedidocompra = @Id";
+                    inner join producto prd on pcd.codproducto = prd.codproducto where pcd.codpresupuestocompra = @Id";
             }else if (option == 2){
                     return @"
                     select *
