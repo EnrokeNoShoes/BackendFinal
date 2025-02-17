@@ -119,7 +119,7 @@ namespace ProyectoFinal.Persistencia
         }
 
     }
-    public class Presupuesto_sql : ISql{
+    public class PresupuestoCompra_sql : ISql{
 
         public string Insert(){
             return "";
@@ -128,10 +128,51 @@ namespace ProyectoFinal.Persistencia
             return "";
         }
         public string Select(int option){
-            return "";
+            if (option == 1)
+            {
+                return @"
+                    select * from presupuestocompra pc
+                        inner join sucursal s on pc.codsucursal = s.codsucursal
+                        inner join proveedor prv on pc.codproveedor = prv.codproveedor
+                        inner join comprobante cp on pc.codcomprobante = cp.codcomprobante
+                        inner join estadomovimiento em on pc.codestado = em.codestado
+                        INNER JOIN usuarios u ON pc.codusu = u.codusu
+                    WHERE pc.codpresupuestocompra = @Id";
+            }
+            else if (option == 2)
+            {
+                return @"
+                    select * from presupuestocompra pc
+                        inner join sucursal s on pc.codsucursal = s.codsucursal
+                        inner join proveedor prv on pc.codproveedor = prv.codproveedor
+                        inner join comprobante cp on pc.codcomprobante = cp.codcomprobante
+                        inner join estadomovimiento em on pc.codestado = em.codestado
+                        inner join usuarios u ON pc.codusu = u.codusu";
+            }
+            else if (option == 3)
+            {
+                return @"
+                    SELECT codestado 
+                    FROM presupuestocompra 
+                    WHERE codpresupuestocompra = @codpresupuestocompra";
+            }
+
+            return string.Empty;;
         }
         public string SelectDet(int option){
-            return "";
+             if (option == 1){
+                    return  @"
+                    select *
+                    from presupuestocompra_det pcd
+                    inner join producto prd on pcd.codproducto = prd.codproducto where pcd.codpedidocompra = @Id";
+            }else if (option == 2){
+                    return @"
+                    select *
+                    from presupuestocompra_det pcd
+                    inner join producto prd on pcd.codproducto = prd.codproducto
+                    where pcd.codpresupuestocompra = @codpresupuestocompra";
+            }
+            return string.Empty;
         }
         public string Update(){
             return "";
