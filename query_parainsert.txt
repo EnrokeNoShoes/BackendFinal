@@ -1,0 +1,6 @@
+SELECT 'INSERT INTO ' || table_name || ' (' || 
+       string_agg(column_name, ', ' ORDER BY ordinal_position) || 
+       ') VALUES ();'
+FROM information_schema.columns 
+WHERE table_name = 'presupuestocompra'
+GROUP BY table_name;

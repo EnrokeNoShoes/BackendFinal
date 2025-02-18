@@ -23,9 +23,8 @@ namespace ProyectoFinal.Persistencia
 
         public string InsertDet(){
 
-            return @"
-                                INSERT INTO pedidocompra_det (codpedidocompra, codproducto, cantidad, costoulitmo)
-                                VALUES (@codpedidocompra, @codproducto, @cantidad, @costoulitmo)";
+            return @"INSERT INTO pedidocompra_det (codpedidocompra, codproducto, cantidad, costoulitmo)
+                    VALUES (@codpedidocompra, @codproducto, @cantidad, @costoulitmo)";
         }
         public string Select(int option)
         {
@@ -122,10 +121,19 @@ namespace ProyectoFinal.Persistencia
     public class PresupuestoCompra_sql : ISql{
 
         public string Insert(){
-            return "";
+            return @"INSERT INTO presupuestocompra (codpresupuestocompra, codproveedor, codusu, codsucursal, 
+            codcomprobante, numpresupuestoc, fechapresupuesto, totalexenta,
+            totalgravada, totaliva, totalpresupuesto, totaldescuento, codestado) 
+            VALUES (SELECT COALESCE(MAX(codpresupuestocompra), 0) + 1 FROM codpresupuestocompra),
+            @codproveedor, @codusu, @codsucursal, @codcomprobante, @numpresupuestoc, @fechapresupuesto,
+            @totalexenta, @totalgravada, @totaliva, @totalpresupuesto, @totaldescuento, @codestado
+            )
+            RETURNING codpresupuestocompra";
         }
         public string InsertDet(){
-            return "";
+            return @"INSERT INTO presupuestocompra_det (codpresupuestocompra, codproducto, 
+            preciocompra, precioneto, cantidad, costo_anterior, costo_ultimo) VALUES (@codpresupuestocompra, @codproducto, @preciocompra, @precioneto, 
+            @cantidad, @costo_anterior, @costo_ultimo);";
         }
         public string Select(int option){
             if (option == 1)
@@ -175,7 +183,10 @@ namespace ProyectoFinal.Persistencia
             return string.Empty;
         }
         public string Update(){
-            return "";
+             return @"
+                UPDATE presupuestocompra
+                SET codestado = @codestado
+                WHERE codpresupuestocompra = @codpresupuestocompra";;
         }
         public string Delete(){
             return "";

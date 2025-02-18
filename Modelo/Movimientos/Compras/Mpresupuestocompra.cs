@@ -1,4 +1,4 @@
-namespace ProyectoFinal.Fina{
+namespace ProyectoFinal.Modelo{
 
     public class Mpresupuestocompra{
         public int codpresupuestocompra { get; set; }
