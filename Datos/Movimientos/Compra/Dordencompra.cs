@@ -50,7 +50,7 @@ namespace ProyectoFinal.Datos{
             return ordencompra;
         }
 
-                public async Task<int> InsertarRegistro(Mordencompra ordencompra)
+        public async Task<int> InsertarRegistro(Mordencompra ordencompra)
         {
             using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
             {
@@ -164,9 +164,6 @@ namespace ProyectoFinal.Datos{
                     }
                 }
             }
-        }
-        
+        }   
     }
-
-
 }

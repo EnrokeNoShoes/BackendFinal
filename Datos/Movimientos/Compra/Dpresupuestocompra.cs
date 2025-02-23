@@ -3,6 +3,7 @@ using ProyectoFinal.Persistencia;
 using Npgsql; // Librería para PostgreSQL
 using System.Data;
 using System.Buffers;
+using System.Resources;
 
 namespace ProyectoFinal.Datos
 {
@@ -28,6 +29,29 @@ namespace ProyectoFinal.Datos
                         if (await reader.ReadAsync())
                         {
                             presupuestocompra.codpresupuestocompra = (int)reader["codpresupuestocompra"];
+                            presupuestocompra.codcomprobante = (int)reader["codcomprobante"];
+                            presupuestocompra.numcomprobante = (string)reader["numcomprobante"];
+                            presupuestocompra.descomprobante = (string)reader["descomprobante"];
+                            presupuestocompra.numpresupuestoc = (string)reader["numpresupuestoc"];
+                            presupuestocompra.fechapresupuesto = (string)reader["fechapresupuesto"];
+                            presupuestocompra.codsucursal = (int)reader["codsucursal"];
+                            presupuestocompra.numsucursal = (string)reader["numsucursal"];
+                            presupuestocompra.dessucursal = (string)reader["dessucursal"];
+                            presupuestocompra.totalgravada = (decimal)reader["totalgravada"];
+                            presupuestocompra.totalexenta = (decimal)reader["totalexenta"];
+                            presupuestocompra.totaliva = (decimal)reader["totaliva"];
+                            presupuestocompra.totaldescuento = (decimal)reader["totaldescuento"];
+                            presupuestocompra.totalpresupuesto = (decimal)reader["totalpresupuesto"];
+                            presupuestocompra.cotizacion1 = (decimal)reader["cotizacion1"];
+                            presupuestocompra.cotizacion1 = (decimal)reader["cotizacion2"];
+                            presupuestocompra.codmoneda = (int)reader["codmoneda"];
+                            presupuestocompra.nummoneda = (string)reader["nummomeda"];
+                            presupuestocompra.desmoneda = (string)reader["desmoneda"];
+                            presupuestocompra.codmoneda = (int)reader["codmoneda"];
+                            presupuestocompra.nummoneda = (string)reader["nummoneda"];
+                            presupuestocompra.desmoneda = (string)reader["desmoneda"];
+                            presupuestocompra.codusu = (int)reader["codusu"];
+                            presupuestocompra.nomusu = (string)reader["nomusu"];
                         }
                     }
                 }
@@ -43,7 +67,14 @@ namespace ProyectoFinal.Datos
                             var detalle = new Mpresupuestocompradet
                             {
                                 codpresupuestocompra = (int)reader["codpresupuestocompra"],
-
+                                codproducto = (int)reader["codproducto"],
+                                codigobarra = (string)reader["codigobarra"],
+                                desproducto = (string)reader["desproducto"],
+                                preciocompra = (decimal)reader["preciocompra"],
+                                precioneto = (decimal)reader["precioneto"],
+                                cantidad = (decimal)reader["cantidad"],
+                                costo_anterior = (decimal)reader["costo_anterior"],
+                                costo_ultimo = (decimal)reader["costo_ultimo"],
                             };
                             presupuestocompra.Detalles.Add(detalle);
                         }

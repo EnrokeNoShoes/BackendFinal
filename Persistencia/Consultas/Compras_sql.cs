@@ -53,7 +53,7 @@ namespace ProyectoFinal.Persistencia
                     INNER JOIN sucursal s ON pc.codsucursal = s.codsucursal
                     INNER JOIN comprobante tp ON pc.codcomprobante = tp.codcomprobante
                     INNER JOIN estadomovimiento em ON pc.codestado = em.codestado
-                    INNER JOIN usuarios u ON pc.codusu = u.codusu";
+                    INNER JOIN usuarios u ON pc.codusu = u.codusu order by 1";
             }
             else if (option == 3)
             {
@@ -143,6 +143,7 @@ namespace ProyectoFinal.Persistencia
                         inner join sucursal s on pc.codsucursal = s.codsucursal
                         inner join proveedor prv on pc.codproveedor = prv.codproveedor
                         inner join comprobante cp on pc.codcomprobante = cp.codcomprobante
+                        inner join moneda mn on pc.codmoneda = mn.codmoneda
                         inner join estadomovimiento em on pc.codestado = em.codestado
                         INNER JOIN usuarios u ON pc.codusu = u.codusu
                     WHERE pc.codpresupuestocompra = @Id";
@@ -153,6 +154,7 @@ namespace ProyectoFinal.Persistencia
                     select * from presupuestocompra pc
                         inner join sucursal s on pc.codsucursal = s.codsucursal
                         inner join proveedor prv on pc.codproveedor = prv.codproveedor
+                        inner join moneda mn on pc.codmoneda = mn.codmoneda
                         inner join comprobante cp on pc.codcomprobante = cp.codcomprobante
                         inner join estadomovimiento em on pc.codestado = em.codestado
                         inner join usuarios u ON pc.codusu = u.codusu";
