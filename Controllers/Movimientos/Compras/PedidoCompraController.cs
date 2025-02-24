@@ -49,26 +49,29 @@ namespace Proyecto_Final.Controller
                 return BadRequest(new { message = "No se pudo crear el pedido de compra." });
             }
         }
-        [HttpPut]
-        [Route("anular")]
-        public async Task<ActionResult> PutActualizarEstado([FromBody] Mpedidocompra pedido)
+        [HttpPut("anular")]
+        public async Task<ActionResult> PutActualizarEstado([FromQuery] int codpedidocompra, [FromQuery] int codestado)
         {
-            try{
-                int filasAfectadas = await funcion.ActualizarEstadoPedidoCompra(pedido.codpedidocompra, pedido.codestado);
+            try
+            {
+            
+                int filasAfectadas = await funcion.ActualizarEstadoPedidoCompra(codpedidocompra, codestado);
 
                 if (filasAfectadas > 0)
                 {
                     return Ok(new { message = "Estado del pedido actualizado correctamente." });
                 }
-                    else
+                else
                 {
                     return NotFound(new { message = "No se encontró el pedido con el código especificado." });
                 }
-            }catch (Exception ex){
-                return BadRequest(new { Error = ex.Message });
             }
-            
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
 
     }
 
