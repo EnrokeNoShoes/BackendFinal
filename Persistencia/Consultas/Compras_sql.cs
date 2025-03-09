@@ -151,13 +151,18 @@ namespace ProyectoFinal.Persistencia
             else if (option == 2)
             {
                 return @"
-                    select * from presupuestocompra pc
-                        inner join sucursal s on pc.codsucursal = s.codsucursal
-                        inner join proveedor prv on pc.codproveedor = prv.codproveedor
-                        inner join moneda mn on pc.codmoneda = mn.codmoneda
-                        inner join comprobante cp on pc.codcomprobante = cp.codcomprobante
-                        inner join estadomovimiento em on pc.codestado = em.codestado
-                        inner join usuarios u ON pc.codusu = u.codusu";
+                    select pc.codpresupuestocompra ,pc.numpresupuestoc, c.numcomprobante, pc.fechapresupuesto, 
+                    p.numproveedor, p.numdoc, p.apellidos || ' ' || p.nombres as razonsocial,
+                    e.numestado , e.desestado, pc.totalpresupuesto, m.nummoneda , m.desmoneda, m2.nummodalidad ,
+                    m2.desmodaliada , u.nomusu, s.numsuc , s.dessucu 
+                    from presupuestocompra pc 
+                    inner join proveedor p on pc.codproveedor = p.codproveedor 
+                    inner join sucursal s on pc.codsucursal  = s.codsucursal 
+                    inner join comprobante c on pc.codcomprobante = c.codcomprobante 
+                    inner join usuarios u on pc.codusu = u.codusu 
+                    inner join estadomovimiento e on pc.codestado = e.codestado 
+                    inner join moneda m  on pc.codmoneda = m.codmoneda 
+                    inner join modalidadpago m2 on pc.codmodalidad = m2.codmodalidad   ";
             }
             else if (option == 3)
             {

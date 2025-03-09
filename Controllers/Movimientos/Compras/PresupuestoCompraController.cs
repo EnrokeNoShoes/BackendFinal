@@ -22,7 +22,19 @@ namespace Proyecto_Final.Controller{
             }
             return Ok(presupuestocompra); 
         }
-        
+        [HttpGet]
+        [Route("lista")]
+        public async Task<ActionResult<Mpresupuestocompra>> GetList()
+        {
+            
+            var presupuestocompra = await funcion.ObtenerPresupuestoCompraLista();
+
+            if (presupuestocompra == null) 
+            {
+                return NotFound(); 
+            }
+            return Ok(presupuestocompra); 
+        }    
         [HttpPost]
         [Route("nuevo")]
         public async Task<ActionResult> PostPresupuestoCompra([FromBody] Mpresupuestocompra presupuesto)

@@ -4,13 +4,13 @@ namespace ProyectoFinal.Modelo{
         public int codpresupuestocompra { get; set; }
         public int codproveedor { get; set; }
         public string numproveedor {get;set;}
-        public string rucproveedor {get; set;}
+        public string numdoc {get;set;}
         public string razonsocial {get;set;}
         public int codusu { get; set; }
         public string nomusu { get; set; }
         public int codsucursal { get; set;}
-        public string numsucursal{get;set;}
-        public string dessucursal{get;set;}
+        public string numsuc{get;set;}
+        public string dessucu{get;set;}
         public int codcomprobante { get; set; }
         public string numcomprobante {get; set;}
         public string descomprobante {get;set;}
@@ -29,6 +29,9 @@ namespace ProyectoFinal.Modelo{
         public int codestado { get; set; }
         public string numestado {get;set;}
         public string desestado {get;set;}
+        public int codmodalidad { get; set; }
+        public string nummodalidad {get;set;}
+        public string desmodaliada {get;set;}
         public List<Mpresupuestocompradet> Detalles { get; set; } = new List<Mpresupuestocompradet>();
     }
 

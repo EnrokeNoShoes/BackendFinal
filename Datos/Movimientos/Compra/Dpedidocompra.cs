@@ -216,7 +216,7 @@ namespace ProyectoFinal.Datos{
                                     throw new Exception("El pedido de compra no se puede utilizar ya supero los dias.");
                             }
                         }
-                        string actulizarestado = query.Update() ;
+                        string actulizarestado = query.Update();
 
                         using (var cmd = new NpgsqlCommand(actulizarestado, npgsql))
                         {
@@ -234,7 +234,6 @@ namespace ProyectoFinal.Datos{
                     catch (Exception ex)
                     {
                         await transaction.RollbackAsync();
-                        Console.WriteLine($"Error: {ex.Message}");
                         throw;
                     }
                 }

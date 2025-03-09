@@ -35,8 +35,8 @@ namespace ProyectoFinal.Datos
                             presupuestocompra.numpresupuestoc = (string)reader["numpresupuestoc"];
                             presupuestocompra.fechapresupuesto = (string)reader["fechapresupuesto"];
                             presupuestocompra.codsucursal = (int)reader["codsucursal"];
-                            presupuestocompra.numsucursal = (string)reader["numsucursal"];
-                            presupuestocompra.dessucursal = (string)reader["dessucursal"];
+                            presupuestocompra.numsuc = (string)reader["numsucursal"];
+                            presupuestocompra.dessucu = (string)reader["dessucursal"];
                             presupuestocompra.totalgravada = (decimal)reader["totalgravada"];
                             presupuestocompra.totalexenta = (decimal)reader["totalexenta"];
                             presupuestocompra.totaliva = (decimal)reader["totaliva"];
@@ -201,5 +201,50 @@ namespace ProyectoFinal.Datos
             }
         }
 
+        public async Task<List<Mpresupuestocompra>> ObtenerPresupuestoCompraLista(){
+            var lista = new List<Mpresupuestocompra>();
+            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            {
+                await npgsql.OpenAsync();
+                string consultapresupuesto = query.Select(2);
+                using (var cmdPresupuesto = new NpgsqlCommand(consultapresupuesto, npgsql))
+                {
+                    using (var readerPresupuesto = await cmdPresupuesto.ExecuteReaderAsync())
+                    {
+                        while (await readerPresupuesto.ReadAsync())
+                        {
+                            var presupuesto = new Mpresupuestocompra
+                            {
+                                codpresupuestocompra = Convert.ToInt32(readerPresupuesto["codpresupuestocompra"]),
+                                numcomprobante = (string)readerPresupuesto["numcomprobante"],
+                                descomprobante = (string)readerPresupuesto["desproducto"],
+                                numpresupuestoc = (string)readerPresupuesto["numpresupuestoc"],
+                                numproveedor = (string)readerPresupuesto["numproveedor"],
+                                numdoc = (string)readerPresupuesto["numdoc"],
+                                razonsocial = (string)readerPresupuesto["razonsocial"],
+                                numestado = (string)readerPresupuesto["numestado"],
+                                desestado = (string)readerPresupuesto["deses"],
+                                fechapresupuesto = (string)readerPresupuesto["fechapresupuesto"],
+                                nummodalidad = (string)readerPresupuesto["nummodalidad"],
+                                desmodaliada = (string)readerPresupuesto["desmodaliada"],
+                                totalpresupuesto = (decimal)readerPresupuesto["totalpresupuesto"],
+                                numsuc = (string)readerPresupuesto["numsuc"],
+                                dessucu = (string)readerPresupuesto["dessucu"],
+                                nummoneda = (string)readerPresupuesto["nummoneda"],
+                                desmoneda = (string)readerPresupuesto["desmoneda"]
+                            };
+
+                            lista.Add(presupuesto);
+                        }
+
+                    }
+                }
+                await npgsql.CloseAsync();
+                Console.WriteLine($"Estado al final (después de cerrar): {npgsql.State}"); 
+            }
+            return lista;
+        }
+
     }
+    
 }
