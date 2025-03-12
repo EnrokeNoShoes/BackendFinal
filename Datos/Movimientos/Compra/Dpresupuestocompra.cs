@@ -72,9 +72,7 @@ namespace ProyectoFinal.Datos
                                 desproducto = (string)reader["desproducto"],
                                 preciocompra = (decimal)reader["preciocompra"],
                                 precioneto = (decimal)reader["precioneto"],
-                                cantidad = (decimal)reader["cantidad"],
-                                costo_anterior = (decimal)reader["costo_anterior"],
-                                costo_ultimo = (decimal)reader["costo_ultimo"],
+                                cantidad = (decimal)reader["cantidad"]
                             };
                             presupuestocompra.Detalles.Add(detalle);
                         }

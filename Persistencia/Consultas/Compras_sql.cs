@@ -176,17 +176,14 @@ namespace ProyectoFinal.Persistencia
         }
         public string SelectDet(int option){
              if (option == 1){
-                    return  @"
-                    select *
-                    from presupuestocompra_det pcd
-                    inner join producto prd on pcd.codproducto = prd.codproducto where pcd.codpresupuestocompra = @Id";
-            }else if (option == 2){
                     return @"
-                    select *
-                    from presupuestocompra_det pcd
-                    inner join producto prd on pcd.codproducto = prd.codproducto
-                    where pcd.codpresupuestocompra = @codpresupuestocompra";
-            }
+                    select 
+                    pcd.codpresupuestocompra, pcd.codproducto , p.codigobarra , p.desproducto , t.numiva, 
+                    pcd.preciocompra , pcd.precioneto , p.cantidad 
+                    from presupuestocompra_det pcd 
+                    inner join producto p on pcd.codproducto  = p.codproducto 
+                    inner join tipoiva t on p.codiva = t.codiva where pcd.codpresupuestocompra = @Id";
+             }
             return string.Empty;
         }
         public string Update(){
