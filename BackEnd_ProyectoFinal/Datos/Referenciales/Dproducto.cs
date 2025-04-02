@@ -75,9 +75,6 @@ namespace ProyectoFinal.Datos
                                 codigobarra = (string)readerProducto["codigobarra"],
                                 desproducto = (string)readerProducto["desproducto"],
                                 costoultimo = (decimal)readerProducto["costoultimo"],
-                                codsucursal = (int)readerProducto["codsucursal"],
-                                numsuc = (string)readerProducto["numsuc"],
-                                dessucu = (string)readerProducto["dessucu"]
                             };
 
                             lista.Add(producto);

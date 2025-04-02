@@ -4,8 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ProyectoFinal.Custom;
 using ProyectoFinal.Modelo;
-
-
+using Proyecto_Final.Data;
+using Proyecto_Final.Shared;
+using Proyecto_Final.Shared.Compras.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +17,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Inyectamos los datos necesarios a usar
+builder.Services.AddScoped<ProyectoFinal_Conexion>();
+
 // Habilitar CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
@@ -57,8 +61,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAllOrigins");
-app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

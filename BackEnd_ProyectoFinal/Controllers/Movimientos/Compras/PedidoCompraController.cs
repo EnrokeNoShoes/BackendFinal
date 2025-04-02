@@ -8,37 +8,44 @@ namespace Proyecto_Final.Controller
     [Route("api/pedidocompra")]
     public class PedidoCompraController : ControllerBase
     {
-        Dpedidocompra funcion = new Dpedidocompra();
+        private readonly Dpedidocompra _funcion;
+
+        // Inyección de dependencias del constructor
+        public PedidoCompraController(Dpedidocompra funcion)
+        {
+            _funcion = funcion;
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Mpedidocompra>> Get(int id)
         {
-            
-            var pedido = await funcion.ObtenerPedidoCompraPorId(id);
+            var pedido = await _funcion.ObtenerPedidoCompraPorId(id);
 
-            if (pedido == null) 
+            if (pedido == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
-            return Ok(pedido); 
+            return Ok(pedido);
         }
+
         [HttpGet]
         [Route("lista")]
-        public async Task<ActionResult<Mpedidocompra>> GetList()
+        public async Task<ActionResult<List<Mpedidocompra>>> GetList()  // Debería devolver una lista de pedidos
         {
-            
-            var pedido = await funcion.ObtenerPedidoCompraLista();
+            var pedidos = await _funcion.ObtenerPedidoCompraLista();
 
-            if (pedido == null) 
+            if (pedidos == null || pedidos.Count == 0)
             {
-                return NotFound(); 
+                return NotFound();
             }
-            return Ok(pedido); 
+            return Ok(pedidos);
         }
+
         [HttpPost]
         [Route("nuevo")]
         public async Task<ActionResult> PostPedidoCompra([FromBody] Mpedidocompra pedido)
         {
-            int resultado = await funcion.InsertarPedidoCompra(pedido);
+            int resultado = await _funcion.InsertarPedidoCompra(pedido);
 
             if (resultado > 0)
             {
@@ -49,13 +56,13 @@ namespace Proyecto_Final.Controller
                 return BadRequest(new { message = "No se pudo crear el pedido de compra." });
             }
         }
+
         [HttpPut("anular")]
         public async Task<ActionResult> PutActualizarEstado([FromQuery] int codpedidocompra, [FromQuery] int codestado)
         {
             try
             {
-            
-                int filasAfectadas = await funcion.ActualizarEstadoPedidoCompra(codpedidocompra, codestado);
+                int filasAfectadas = await _funcion.ActualizarEstadoPedidoCompra(codpedidocompra, codestado);
 
                 if (filasAfectadas > 0)
                 {
@@ -71,8 +78,5 @@ namespace Proyecto_Final.Controller
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-
     }
-
 }

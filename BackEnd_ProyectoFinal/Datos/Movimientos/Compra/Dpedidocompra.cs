@@ -2,18 +2,27 @@ using ProyectoFinal.Modelo;
 using ProyectoFinal.Persistencia;
 using Npgsql; // Librería para PostgreSQL
 using System.Data;
-using System.Buffers;
+using Proyecto_Final.Data;
 
-namespace ProyectoFinal.Datos{
-    public class Dpedidocompra{
-
-        ConexionBD cn = new ConexionBD();
+namespace ProyectoFinal.Datos
+{
+    public class Dpedidocompra
+    {
+        private readonly ProyectoFinal_Conexion _conexion;  // Usamos _conexion para la conexión inyectada
         PedidosCompras_sql query = new PedidosCompras_sql();
+
+        // Inyección de dependencias en el constructor
+        public Dpedidocompra(ProyectoFinal_Conexion conexion)
+        {
+            _conexion = conexion;
+        }
+
+        // Método para obtener un pedido de compra por ID
         public async Task<Mpedidocompra> ObtenerPedidoCompraPorId(int id)
         {
             var pedido = new Mpedidocompra();
 
-            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            using (var npgsql = new NpgsqlConnection(_conexion.cadenaSQL()))  // Usamos _conexion
             {
                 await npgsql.OpenAsync();
                 string consultaCabecera = query.Select(1);
@@ -43,6 +52,8 @@ namespace ProyectoFinal.Datos{
                         }
                     }
                 }
+
+                // Obtener detalles del pedido
                 string consultaDetalles = query.SelectDet(1);
                 using (var cmd = new NpgsqlCommand(consultaDetalles, npgsql))
                 {
@@ -54,7 +65,7 @@ namespace ProyectoFinal.Datos{
                         {
                             var detalle = new Mdetallepedidocompra
                             {
-                                codpedidocompra = (int)reader["codpedidocompra"],	
+                                codpedidocompra = (int)reader["codpedidocompra"],
                                 codproducto = (int)reader["codproducto"],
                                 codigobarra = (string)reader["codigobarra"],
                                 desproducto = (string)reader["desproducto"],
@@ -67,11 +78,13 @@ namespace ProyectoFinal.Datos{
                 }
             }
             return pedido;
-        }    
+        }
+
+        // Método para obtener la lista de pedidos de compra
         public async Task<List<Mpedidocompra>> ObtenerPedidoCompraLista()
         {
             var pedidos = new List<Mpedidocompra>();
-            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            using (var npgsql = new NpgsqlConnection(_conexion.cadenaSQL()))  // Usamos _conexion
             {
                 await npgsql.OpenAsync();
                 string consultaCabecera = query.Select(2);
@@ -105,6 +118,8 @@ namespace ProyectoFinal.Datos{
                         }
                     }
                 }
+
+                // Obtener detalles del pedido
                 string consultaDetalles = query.SelectDet(2);
                 using (var cmdDetalle = new NpgsqlCommand(consultaDetalles, npgsql))
                 {
@@ -134,9 +149,11 @@ namespace ProyectoFinal.Datos{
             }
             return pedidos;
         }
+
+        // Método para insertar un nuevo pedido de compra
         public async Task<int> InsertarPedidoCompra(Mpedidocompra pedidoCompra)
         {
-            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            using (var npgsql = new NpgsqlConnection(_conexion.cadenaSQL()))  // Usamos _conexion
             {
                 await npgsql.OpenAsync();
                 using (var transaction = await npgsql.BeginTransactionAsync())
@@ -189,9 +206,11 @@ namespace ProyectoFinal.Datos{
                 }
             }
         }
+
+        // Método para actualizar el estado de un pedido
         public async Task<int> ActualizarEstadoPedidoCompra(int codpedidocompra, int codestado)
         {
-            using (var npgsql = new NpgsqlConnection(cn.cadenaSQL()))
+            using (var npgsql = new NpgsqlConnection(_conexion.cadenaSQL()))  // Usamos _conexion
             {
                 await npgsql.OpenAsync();
                 using (var transaction = await npgsql.BeginTransactionAsync())
@@ -207,15 +226,17 @@ namespace ProyectoFinal.Datos{
 
                             var estadoActual = await cmdValidar.ExecuteScalarAsync();
 
-                            switch ((int)estadoActual){
+                            switch ((int)estadoActual)
+                            {
                                 case 2:
                                     throw new Exception("El pedido de compra ya se encuentra anulado.");
-                                case 3: 
+                                case 3:
                                     throw new Exception("El pedido de compra ya fue utilizado.");
                                 case 4:
-                                    throw new Exception("El pedido de compra no se puede utilizar ya supero los dias.");
+                                    throw new Exception("El pedido de compra no se puede utilizar ya supero los días.");
                             }
                         }
+
                         string actulizarestado = query.Update();
 
                         using (var cmd = new NpgsqlCommand(actulizarestado, npgsql))
@@ -239,9 +260,5 @@ namespace ProyectoFinal.Datos{
                 }
             }
         }
-
-
-        
     }
-
 }
