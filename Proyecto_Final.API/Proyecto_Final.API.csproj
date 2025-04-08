@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Proyecto_Final.Data\Proyecto_Final.Data.csproj" />
+    <ProjectReference Include="..\Proyecto_Final.Services\Proyecto_Final.Services.csproj" />
     <ProjectReference Include="..\Proyecto_Finale.Entidades\Proyecto_Final.Shared.csproj" />
   </ItemGroup>
 

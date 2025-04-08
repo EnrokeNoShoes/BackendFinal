@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using ProyectoFinal.Datos;
-using ProyectoFinal.Modelo;
+using Proyecto_Final.Shared.Compras.DTO;
+using Proyecto_Final.Services;
+using Proyecto_Final.Shared.Compras;
 
 namespace Proyecto_Final.Controller
 {
@@ -8,74 +9,88 @@ namespace Proyecto_Final.Controller
     [Route("api/pedidocompra")]
     public class PedidoCompraController : ControllerBase
     {
-        private readonly Dpedidocompra _funcion;
+        private readonly IPedidoCompraService _pedidoService;
 
-        // Inyección de dependencias del constructor
-        public PedidoCompraController(Dpedidocompra funcion)
+        public PedidoCompraController(IPedidoCompraService pedidoService)
         {
-            _funcion = funcion;
+            _pedidoService = pedidoService;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Mpedidocompra>> Get(int id)
+        public async Task<ActionResult<PedidoCompraDto>> Get(int id)
         {
-            var pedido = await _funcion.ObtenerPedidoCompraPorId(id);
+            var pedido = await _pedidoService.GetPedidoCompraByIdAsync(id);
 
             if (pedido == null)
-            {
                 return NotFound();
-            }
+
             return Ok(pedido);
         }
 
-        [HttpGet]
-        [Route("lista")]
-        public async Task<ActionResult<List<Mpedidocompra>>> GetList()  // Debería devolver una lista de pedidos
+        [HttpGet("lista")]
+        public async Task<ActionResult<List<PedidoCompraDto>>> GetList()
         {
-            var pedidos = await _funcion.ObtenerPedidoCompraLista();
+            var pedidos = await _pedidoService.GetAllPedidosCompraAsync();
 
             if (pedidos == null || pedidos.Count == 0)
-            {
                 return NotFound();
-            }
+
             return Ok(pedidos);
         }
 
-        [HttpPost]
-        [Route("nuevo")]
-        public async Task<ActionResult> PostPedidoCompra([FromBody] Mpedidocompra pedido)
-        {
-            int resultado = await _funcion.InsertarPedidoCompra(pedido);
-
-            if (resultado > 0)
-            {
-                return Ok(new { message = "Pedido de compra creado correctamente." });
-            }
-            else
-            {
-                return BadRequest(new { message = "No se pudo crear el pedido de compra." });
-            }
-        }
-
-        [HttpPut("anular")]
-        public async Task<ActionResult> PutActualizarEstado([FromQuery] int codpedidocompra, [FromQuery] int codestado)
+        // Método para crear un nuevo pedido
+        [HttpPost("nuevo")]
+        public async Task<ActionResult> Post([FromBody] PedidoCompra pedido)
         {
             try
             {
-                int filasAfectadas = await _funcion.ActualizarEstadoPedidoCompra(codpedidocompra, codestado);
+                // Convertir el PedidoCompraDto a PedidoCompra (suponiendo que tengas un mapeo o constructor adecuado)
+                var pedidoCompra = new PedidoCompra
+                {
+                    codcomprobante = pedido.codpedidocompra, // Esto depende de cómo estén mapeados los campos
+                    numpedidocompra =pedido.numpedidocompra,
+                    fechapedido = pedido.fechapedido,
+                    codestado = pedido.codestado,
+                    codsucursal = pedido.codsucursal,
+                    codusu = pedido.codusu,
+                    detalles = pedido.detalles.Select(d => new PedidoCompraDetalle
+                    {
+                        codproducto = d.codproducto, // Aquí también depende de cómo mapees los detalles
+                        cantidad = d.cantidad,
+                        costoulitmo = d.costoulitmo
+                    }).ToList()
+                };
 
-                if (filasAfectadas > 0)
+                var codGenerado = await _pedidoService.InsertarPedidoCompra(pedidoCompra);
+
+                return Ok(new
                 {
-                    return Ok(new { message = "Estado del pedido actualizado correctamente." });
-                }
-                else
-                {
-                    return NotFound(new { message = "No se encontró el pedido con el código especificado." });
-                }
+                    message = "Pedido creado correctamente.",
+                    id = codGenerado
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = $"Error al crear el pedido: {ex.Message}" });
+            }
+        }
+
+        // Método para actualizar el estado del pedido
+        [HttpPut("anular")]
+        public async Task<ActionResult> Anular([FromQuery] int codpedidocompra, [FromQuery] int codestado)
+        {
+            try
+            {
+                var filasAfectadas = await _pedidoService.ActualizarEstadoPedidoCompra(codpedidocompra, codestado);
+
+                if (filasAfectadas > 0)
+                    return Ok(new { message = "Estado del pedido actualizado correctamente." });
+
+                return NotFound(new { message = "Pedido no encontrado o sin cambios." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error: {ex.Message}" });
             }
         }
     }

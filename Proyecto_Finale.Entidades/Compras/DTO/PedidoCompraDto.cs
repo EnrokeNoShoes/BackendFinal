@@ -8,6 +8,7 @@ namespace Proyecto_Final.Shared.Compras.DTO
 {
     public class PedidoCompraDto
     {
+        public int codpedidocompra { get; set; }
         public string numpedidocompra { get; set; }
         public string numsuc { get; set; }
         public string dessuc { get; set; }
@@ -17,8 +18,7 @@ namespace Proyecto_Final.Shared.Compras.DTO
         public string numestado { get; set; }
         public string desestado { get; set; }
         public string nomusu { get; set; }
-
-        public List<PedidoCompraDetalleDto> Detalles { get; set; } = new List<PedidoCompraDetalleDto>();
+        public List<PedidoCompraDetalleDto> detalles { get; set; } = new List<PedidoCompraDetalleDto>();
     }
 
     public class PedidoCompraDetalleDto
