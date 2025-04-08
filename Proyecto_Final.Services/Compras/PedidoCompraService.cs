@@ -116,7 +116,7 @@ namespace ProyectoFinal.Services
                         pedidos.Add(new
                         {
                             codpedidocompra = reader["codpedidocompra"],
-                            numpedidocompra = reader["codpedidocompra"], // o reader["numpedidocompra"] si viene así
+                            numpedidocompra = reader["numpedidocompra"], // o reader["numpedidocompra"] si viene así
                             numsuc = reader["numsuc"],
                             dessucu = reader["dessucu"],
                             fechapedido = reader["fechapedido"],

@@ -47,7 +47,8 @@ namespace Proyecto_Final.Controller
                 // Convertir el PedidoCompraDto a PedidoCompra (suponiendo que tengas un mapeo o constructor adecuado)
                 var pedidoCompra = new PedidoCompra
                 {
-                    codcomprobante = pedido.codpedidocompra, // Esto depende de cómo estén mapeados los campos
+                    codpedidocompra = pedido.codpedidocompra, // Esto depende de cómo estén mapeados los campos
+                    codcomprobante = pedido.codcomprobante,
                     numpedidocompra =pedido.numpedidocompra,
                     fechapedido = pedido.fechapedido,
                     codestado = pedido.codestado,
@@ -75,7 +76,6 @@ namespace Proyecto_Final.Controller
             }
         }
 
-        // Método para actualizar el estado del pedido
         [HttpPut("anular")]
         public async Task<ActionResult> Anular([FromQuery] int codpedidocompra, [FromQuery] int codestado)
         {

@@ -7,10 +7,11 @@ using ProyectoFinal.Modelo;
 using Proyecto_Final.Data;
 using Proyecto_Final.Shared;
 using Proyecto_Final.Shared.Compras.DTO;
-using ProyectoFinal.Data;
 using Proyecto_Final.Services;
 using ProyectoFinal.Services;
 using Proyecto_Final.Data.Compras;
+using Proyecto_Final.Data.Referenciales.Acceso;
+using Proyecto_Final.Services.Acceso;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,9 @@ builder.Services.AddSwaggerGen();
 //Inyectamos los datos necesarios a usar
 builder.Services.AddScoped<ProyectoFinal_Conexion>();
 builder.Services.AddScoped<PedidosCompras_sql>();
+builder.Services.AddScoped<Usuario_sql>();
 builder.Services.AddTransient<IPedidoCompraService, PedidoCompraService>();
+builder.Services.AddTransient<IAccesoService, AccesoService>();
 
 // Habilitar CORS
 builder.Services.AddCors(options =>

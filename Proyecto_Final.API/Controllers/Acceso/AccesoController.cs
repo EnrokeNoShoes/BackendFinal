@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Custom;
-using ProyectoFinal.Modelo;
-using ProyectoFinal.Modelo.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using ProyectoFinal.Datos;
+using Proyecto_Final.Services.Acceso;
+using Proyecto_Final.Shared.Referenciales;
 
 namespace Proyecto_Final.Controllers
 {
@@ -15,17 +13,19 @@ namespace Proyecto_Final.Controllers
     public class AccesoController : ControllerBase
     {
         private readonly Utilidades _utilidades;
-        
-        public AccesoController(Utilidades utilidades)
+        private readonly IAccesoService _accesoService;
+
+        public AccesoController(Utilidades utilidades, IAccesoService accesoService)
         {
             _utilidades = utilidades;
+            _accesoService = accesoService; 
         }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UsuariologinDTO login)
+        public async Task<IActionResult> Login([FromBody] Usuario login)
         {
             // Instancia de DUsuario para validar al usuario
-            var usuarioService = new Dusuario();
-            var usuario = await usuarioService.ValidarUsuario(login.NomUsu, login.PassUsu);
+            var usuarioService = new Usuario();
+            var usuario = await _accesoService.ValidarUsuario(login.nomusu, login.passusu);
 
             if (usuario == null)
             {

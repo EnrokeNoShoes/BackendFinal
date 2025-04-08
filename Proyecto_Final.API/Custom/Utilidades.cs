@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using ProyectoFinal.Modelo;
+using Proyecto_Final.Shared.Referenciales;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -29,7 +29,7 @@ namespace ProyectoFinal.Custom
             }
         }
 
-        public string generarJWT(Musuario modelo)
+        public string generarJWT(Usuario modelo)
         {
 
             if (modelo == null)

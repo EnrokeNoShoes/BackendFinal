@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Proyecto_Final.Data\Proyecto_Final.Data.csproj" />
+    <ProjectReference Include="..\Proyecto_Final.Shared\Proyecto_Final.Shared.csproj" />
     <ProjectReference Include="..\Proyecto_Finale.Entidades\Proyecto_Final.Shared.csproj" />
   </ItemGroup>
 

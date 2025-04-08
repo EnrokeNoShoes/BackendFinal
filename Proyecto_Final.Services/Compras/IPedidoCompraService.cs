@@ -12,4 +12,6 @@ namespace Proyecto_Final.Services
         Task<int> InsertarPedidoCompra(PedidoCompra pedidoCompra);
         Task<int> ActualizarEstadoPedidoCompra(int codPedidoCompra, int codEstado);
     }
+
+
 }
