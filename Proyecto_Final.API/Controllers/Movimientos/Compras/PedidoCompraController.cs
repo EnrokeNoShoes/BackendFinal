@@ -38,16 +38,16 @@ namespace Proyecto_Final.Controller
             return Ok(pedidos);
         }
 
-        // Método para crear un nuevo pedido
+        
         [HttpPost("nuevo")]
         public async Task<ActionResult> Post([FromBody] PedidoCompra pedido)
         {
             try
             {
-                // Convertir el PedidoCompraDto a PedidoCompra (suponiendo que tengas un mapeo o constructor adecuado)
+                
                 var pedidoCompra = new PedidoCompra
                 {
-                    codpedidocompra = pedido.codpedidocompra, // Esto depende de cómo estén mapeados los campos
+                    codpedidocompra = pedido.codpedidocompra,
                     codcomprobante = pedido.codcomprobante,
                     numpedidocompra =pedido.numpedidocompra,
                     fechapedido = pedido.fechapedido,
@@ -56,7 +56,7 @@ namespace Proyecto_Final.Controller
                     codusu = pedido.codusu,
                     detalles = pedido.detalles.Select(d => new PedidoCompraDetalle
                     {
-                        codproducto = d.codproducto, // Aquí también depende de cómo mapees los detalles
+                        codproducto = d.codproducto,
                         cantidad = d.cantidad,
                         costoulitmo = d.costoulitmo
                     }).ToList()
@@ -90,7 +90,7 @@ namespace Proyecto_Final.Controller
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Error: {ex.Message}" });
+                return BadRequest(new { message = $"MSG: {ex.Message}" });
             }
         }
     }

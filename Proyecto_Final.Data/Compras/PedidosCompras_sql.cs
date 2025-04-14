@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Proyecto_Final.Data.Utils;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,69 +36,68 @@ namespace Proyecto_Final.Data.Compras
             )";
         }
 
-        public string Select(int option)
+        public string Select(ConsultasEnum consulta)
         {
-            if (option == 1)
+             switch (consulta)
             {
-                return @"
-                SELECT pc.codpedidocompra, pc.codcomprobante, tp.numcomprobante AS tipocomprobante, 
-                       tp.descomprobante, pc.numcomprobante AS numeroregistro, pc.fechapedido, pc.codestado,
-                       em.numestado, em.desestado,  
-                       pc.codsucursal, s.numsuc, s.dessucu, pc.codusu, u.nomusu
-                FROM pedidocompra pc
-                INNER JOIN sucursal s ON pc.codsucursal = s.codsucursal
-                INNER JOIN comprobante tp ON pc.codcomprobante = tp.codcomprobante
-                INNER JOIN estadomovimiento em ON pc.codestado = em.codestado
-                INNER JOIN usuarios u ON pc.codusu = u.codusu
-                WHERE pc.codpedidocompra = @Id";
-            }
-            else if (option == 2)
-            {
-                return @"
-                SELECT pc.codpedidocompra, pc.codcomprobante, tp.numcomprobante AS tipocomprobante, 
-                       tp.descomprobante, pc.numcomprobante AS numeroregistro, pc.fechapedido, pc.codestado,
-                       em.numestado, em.desestado,  
-                       pc.codsucursal, s.numsuc, s.dessucu, pc.codusu, u.nomusu
-                FROM pedidocompra pc
-                INNER JOIN sucursal s ON pc.codsucursal = s.codsucursal
-                INNER JOIN comprobante tp ON pc.codcomprobante = tp.codcomprobante
-                INNER JOIN estadomovimiento em ON pc.codestado = em.codestado
-                INNER JOIN usuarios u ON pc.codusu = u.codusu 
-                ORDER BY pc.codpedidocompra";
-            }
-            else if (option == 3)
-            {
-                return @"
-                SELECT codestado 
-                FROM pedidocompra 
-                WHERE codpedidocompra = @codpedidocompra";
-            }
+                 case ConsultasEnum.PORID:
+                     return @"
+                          SELECT pc.codpedidocompra, pc.codcomprobante, tp.numcomprobante AS tipocomprobante, 
+                                   tp.descomprobante, pc.numcomprobante AS numeroregistro, pc.fechapedido, pc.codestado,
+                                   em.numestado, em.desestado,  
+                                   pc.codsucursal, s.numsuc, s.dessucu, pc.codusu, u.nomusu
+                          FROM pedidocompra pc
+                          INNER JOIN sucursal s ON pc.codsucursal = s.codsucursal
+                          INNER JOIN comprobante tp ON pc.codcomprobante = tp.codcomprobante
+                          INNER JOIN estadomovimiento em ON pc.codestado = em.codestado
+                          INNER JOIN usuarios u ON pc.codusu = u.codusu
+                          WHERE pc.codpedidocompra = @Id";
+                case ConsultasEnum.ALLREGISTER:
+                    return @"
+                        SELECT pc.codpedidocompra, pc.codcomprobante, tp.numcomprobante AS tipocomprobante, 
+                               tp.descomprobante, pc.numcomprobante AS numeroregistro, pc.fechapedido, pc.codestado,
+                               em.numestado, em.desestado,  
+                               pc.codsucursal, s.numsuc, s.dessucu, pc.codusu, u.nomusu
+                        FROM pedidocompra pc
+                        INNER JOIN sucursal s ON pc.codsucursal = s.codsucursal
+                        INNER JOIN comprobante tp ON pc.codcomprobante = tp.codcomprobante
+                        INNER JOIN estadomovimiento em ON pc.codestado = em.codestado
+                        INNER JOIN usuarios u ON pc.codusu = u.codusu 
+                        ORDER BY pc.codpedidocompra";
+                case ConsultasEnum.STATEREGISTER:
+                    return @"
+                        SELECT codestado 
+                        FROM pedidocompra 
+                        WHERE codpedidocompra = @codpedidocompra";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(consulta), "Tipo de consulta no válido.");
 
-            return string.Empty;
+             } 
+            
         }
 
-        public string SelectDet(int option)
+        public string SelectDet(ConsultasEnum consulta)
         {
-            if (option == 1)
+            switch (consulta)
             {
-                return @"
-                SELECT pcd.codpedidocompra, pcd.codproducto, prd.codigobarra, prd.desproducto, 
-                       pcd.cantidad, pcd.costoulitmo
-                FROM pedidocompra_det pcd
-                INNER JOIN producto prd ON pcd.codproducto = prd.codproducto 
-                WHERE pcd.codpedidocompra = @Id";
-            }
-            else if (option == 2)
-            {
-                return @"
-                SELECT pcd.codpedidocompra, pcd.codproducto, prd.codigobarra, prd.desproducto, 
-                       pcd.cantidad, pcd.costoulitmo
-                FROM pedidocompra_det pcd
-                INNER JOIN producto prd ON pcd.codproducto = prd.codproducto
-                WHERE pcd.codpedidocompra = @codpedidocompra";
-            }
+                case ConsultasEnum.PORID:
+                    return @"
+                            SELECT pcd.codpedidocompra, pcd.codproducto, prd.codigobarra, prd.desproducto, 
+                                   pcd.cantidad, pcd.costoulitmo
+                            FROM pedidocompra_det pcd
+                            INNER JOIN producto prd ON pcd.codproducto = prd.codproducto 
+                            WHERE pcd.codpedidocompra = @Id";
+                case ConsultasEnum.ALLREGISTER:
+                    return @"
+                            SELECT pcd.codpedidocompra, pcd.codproducto, prd.codigobarra, prd.desproducto, 
+                                   pcd.cantidad, pcd.costoulitmo
+                            FROM pedidocompra_det pcd
+                            INNER JOIN producto prd ON pcd.codproducto = prd.codproducto
+                            WHERE pcd.codpedidocompra = @codpedidocompra";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(consulta), "Tipo de consulta no válido.");
 
-            return string.Empty;
+            }
         }
 
         public string Update()

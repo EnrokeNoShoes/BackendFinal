@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Proyecto_Final.Services;
 using System.Data;
 using Proyecto_Final.Data.Compras;
+using Proyecto_Final.Data.Utils;
 
 namespace ProyectoFinal.Services
 {
@@ -36,7 +37,8 @@ namespace ProyectoFinal.Services
 
                 return new PedidoCompraDto
                 {
-                    numpedidocompra = pedidoCompra.codpedidocompra.ToString(),
+                    codpedidocompra = pedidoCompra.codpedidocompra,
+                    numpedidocompra = pedidoCompra.numpedidocompra,
                     numsuc = pedidoCompra.numsuc.ToString(),
                     dessuc = pedidoCompra.dessucu,
                     fechapedido = pedidoCompra.fechapedido.ToString(),
@@ -62,14 +64,14 @@ namespace ProyectoFinal.Services
             {
                 await connection.OpenAsync();
 
-                var pedidosCompra = await GetPedidosCompra(connection); // devuelve List<dynamic>
+                var pedidosCompra = await GetPedidosCompra(connection); 
                 var pedidosCompraList = new List<PedidoCompraDto>();
 
                 foreach (var pedido in pedidosCompra)
                 {
-                    var detalles = await GetPedidoCompraDetallesById(connection, pedido.codpedidocompra); // también es List<dynamic>
+                    var detalles = await GetPedidoCompraDetallesById(connection, pedido.codpedidocompra); 
 
-                    // Convertir detalles de dynamic a PedidoCompraDetalleDto
+                    
                     var detalleList = new List<PedidoCompraDetalleDto>();
                     foreach (var d in detalles)
                     {
@@ -82,10 +84,11 @@ namespace ProyectoFinal.Services
                         });
                     }
 
-                    // Agregar el pedido ya mapeado
+                    
                     pedidosCompraList.Add(new PedidoCompraDto
                     {
-                        numpedidocompra = pedido.codpedidocompra.ToString(),
+                        codpedidocompra = pedido.codpedidocompra,
+                        numpedidocompra = pedido.numpedidocompra.ToString(),
                         numsuc = pedido.numsuc.ToString(),
                         dessuc = pedido.dessucu,
                         fechapedido = Convert.ToDateTime(pedido.fechapedido).ToString("yyyy-MM-dd"),
@@ -96,6 +99,7 @@ namespace ProyectoFinal.Services
                         nomusu = pedido.nomusu,
                         detalles = detalleList
                     });
+
                 }
 
                 return pedidosCompraList;
@@ -105,7 +109,7 @@ namespace ProyectoFinal.Services
 
         private async Task<List<dynamic>> GetPedidosCompra(NpgsqlConnection connection)
         {
-            var query = _sqlQueries.Select(2);
+            var query = _sqlQueries.Select(ConsultasEnum.ALLREGISTER);
             using (var command = new NpgsqlCommand(query, connection))
             {
                 using (var reader = await command.ExecuteReaderAsync())
@@ -116,7 +120,7 @@ namespace ProyectoFinal.Services
                         pedidos.Add(new
                         {
                             codpedidocompra = reader["codpedidocompra"],
-                            numpedidocompra = reader["numpedidocompra"], // o reader["numpedidocompra"] si viene así
+                            numpedidocompra = reader["numeroregistro"], 
                             numsuc = reader["numsuc"],
                             dessucu = reader["dessucu"],
                             fechapedido = reader["fechapedido"],
@@ -134,7 +138,7 @@ namespace ProyectoFinal.Services
 
         private async Task<List<dynamic>> GetPedidoCompraDetallesById(NpgsqlConnection connection, int pedidoId)
         {
-            var query = _sqlQueries.SelectDet(2);
+            var query = _sqlQueries.SelectDet(ConsultasEnum.ALLREGISTER);
             using (var command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@codpedidocompra", pedidoId);
@@ -159,7 +163,7 @@ namespace ProyectoFinal.Services
 
         private async Task<dynamic> GetPedidoCompraById(NpgsqlConnection connection, int id)
         {
-            var query = _sqlQueries.Select(1);
+            var query = _sqlQueries.Select(ConsultasEnum.PORID);
             using (var command = new NpgsqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@Id", id);
@@ -171,7 +175,7 @@ namespace ProyectoFinal.Services
                         return new
                         {
                             codpedidocompra = reader["codpedidocompra"],
-                            numpedidocompra = reader["codpedidocompra"],
+                            numpedidocompra = reader["numeroregistro"],
                             numsuc = reader["numsuc"],
                             dessucu = reader["dessucu"],
                             fechapedido = reader["fechapedido"],
@@ -188,7 +192,7 @@ namespace ProyectoFinal.Services
         }
         public async Task<int> InsertarPedidoCompra(PedidoCompra pedidoCompra)
         {
-            using (var npgsql = new NpgsqlConnection(_connectionString))  // Usamos _conexion
+            using (var npgsql = new NpgsqlConnection(_connectionString))  
             {
                 await npgsql.OpenAsync();
                 using (var transaction = await npgsql.BeginTransactionAsync())
@@ -212,7 +216,7 @@ namespace ProyectoFinal.Services
                             pedidoCompra.codpedidocompra = (int)await cmdCabecera.ExecuteScalarAsync();
                         }
 
-                        // Insertar detalles del pedido
+                        
                         foreach (var detalle in pedidoCompra.detalles)
                         {
                             string queryDetalle = _sqlQueries.InsertDet();
@@ -243,18 +247,18 @@ namespace ProyectoFinal.Services
         }
 
 
-        // Método para actualizar el estado de un pedido
+        
         public async Task<int> ActualizarEstadoPedidoCompra(int codPedidoCompra, int codEstado)
         {
-            using (var npgsql = new NpgsqlConnection(_connectionString))  // Usamos _conexion
+            using (var npgsql = new NpgsqlConnection(_connectionString))  
             {
                 await npgsql.OpenAsync();
                 using (var transaction = await npgsql.BeginTransactionAsync())
                 {
                     try
                     {
-                        // Verificar estado actual del pedido
-                        string consultaEstado = _sqlQueries.Select(3);
+                        
+                        string consultaEstado = _sqlQueries.Select(ConsultasEnum.STATEREGISTER);
 
                         using (var cmdValidar = new NpgsqlCommand(consultaEstado, npgsql))
                         {
@@ -263,19 +267,19 @@ namespace ProyectoFinal.Services
 
                             var estadoActual = await cmdValidar.ExecuteScalarAsync();
 
-                            // Lógica de validación
+                            
                             switch ((int)estadoActual)
                             {
                                 case 2:
-                                    throw new Exception("El pedido de compra ya se encuentra anulado.");
+                                    throw new InvalidOperationException("El pedido de compra ya se encuentra anulado.");
                                 case 3:
-                                    throw new Exception("El pedido de compra ya fue utilizado.");
+                                    throw new InvalidOperationException("El pedido de compra ya fue utilizado.");
                                 case 4:
-                                    throw new Exception("El pedido de compra no se puede utilizar, ya superó los días permitidos.");
+                                    throw new InvalidOperationException("El pedido de compra no se puede utilizar, ya superó los días permitidos.");
                             }
                         }
 
-                        // Actualizar estado del pedido
+                        
                         string actualizaEstado = _sqlQueries.Update();
 
                         using (var cmd = new NpgsqlCommand(actualizaEstado, npgsql))
@@ -285,17 +289,22 @@ namespace ProyectoFinal.Services
                             cmd.Parameters.AddWithValue("@codestado", codEstado);
                             cmd.Transaction = transaction;
 
-                            // Ejecutar la actualización
+                            
                             int filasAfectadas = await cmd.ExecuteNonQueryAsync();
 
-                            // Commit de la transacción
+                            
                             await transaction.CommitAsync();
                             return filasAfectadas;
                         }
                     }
+                    catch (InvalidOperationException)
+                    {
+                        await transaction.RollbackAsync();
+                        throw;
+                    }
                     catch (Exception ex)
                     {
-                        // Rollback en caso de error
+                        
                         await transaction.RollbackAsync();
                         throw new Exception("Hubo un error al actualizar el estado del pedido de compra. Consulte el registro de errores.");
                     }
