@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ProyectoFinal.Custom;
-using ProyectoFinal.Modelo;
 using Proyecto_Final.Data;
 using Proyecto_Final.Shared;
 using Proyecto_Final.Shared.Compras.DTO;
